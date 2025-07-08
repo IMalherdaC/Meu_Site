@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IGOR MALHER DA COSTA</title>
+
+    <!-- Link para o arquivo CSS principal -->
+    <link rel="stylesheet" href="css/style.css">
+
+    <!-- Font Awesome para ícones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Estilo extra para scroll suave -->
+    <style>
+        html {
+            scroll-behavior: smooth;
+        }
+
+        .navbar {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background-color: #fff;
+        }
+
+        .skill-progress {
+            height: 8px;
+            background-color: #ccc;
+            border-radius: 5px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .skill-progress::after {
+            content: '';
+            position: absolute;
+            height: 100%;
+            background-color: #4CAF50;
+            left: 0;
+            top: 0;
+            width: 0;
+            transition: width 1s ease-in-out;
+        }
+    </style>
+</head>
+
+    <!-- NAVEGAÇÃO PRINCIPAL -->
+    <nav class="navbar" id="navbar">
+        <div class="container">
+            <ul class="nav-menu">
+                <li><a href="#sobre" class="nav-link">Sobre</a></li>
+                <li><a href="#experiencia" class="nav-link">Experiência</a></li>
+                <li><a href="#educacao" class="nav-link">Educação</a></li>
+                <li><a href="#habilidades" class="nav-link">Habilidades</a></li>
+                <li><a href="#certificacoes" class="nav-link">Certificações</a></li>
+                <li><a href="#lideranca" class="nav-link">Liderança</a></li>
+                <li><a href="#contato" class="nav-link">Contato</a></li>
+                <li><a href="educational_app.html" class="nav-link app-link">🎮 Jogo Educativo</a></li>
+            </ul>
+        </div>
+    </nav>
+
+<body>
+    <!-- INFORMAÇÕES PESSOAIS -->
+    <header class="header" id="header">
+        <div class="container">
+            <!-- FOTO DE PERFIL -->
+            <div class="profile-section">
+                <img src="img/perfil.jpg" alt="Foto Igor Malher" class="profile-photo">
+            </div>
+            <div class="profile-info">
+                <h1 class="name" id="userName">Igor Malher da Costa</h1>
+                <h2 class="title" id="userTitle">Técnico Administrativo & Estudante de TI</h2>
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <i class="fas fa-envelope"></i>
+                        <a href="mailto:imalherdac@outlook.com">imalherdac@outlook.com</a>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-phone"></i>
+                        <a href="tel:+5569999891210">+55 (69) 99989-1210</a>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>Ariquemes, Rondônia</span>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fab fa-linkedin"></i>
+                        <a href="https://www.linkedin.com/in/igor-malher/" target="_blank">linkedin.com/in/igor-malher</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- SCRIPTS -->
+    <script>
+        // Animação das barras de progresso
+        window.addEventListener("DOMContentLoaded", () => {
+            const bars = document.querySelectorAll(".skill-progress");
+            bars.forEach(bar => {
+                const value = bar.getAttribute("data-progress");
+                bar.querySelector("::after");
+                bar.style.setProperty("--progress", value + "%");
+                bar.style.setProperty("width", value + "%");
+                bar.style.position = "relative";
+            });
+        });
+    </script>
+</body>
+
+    <!-- CONTEÚDO PRINCIPAL -->
+    <main class="main-content">
+        <!-- SOBRE MIM -->
+        <section class="section" id="sobre">
+            <div class="container">
+                <h2 class="section-title">Sobre Mim</h2>
+                <div class="about-content">
+                    <p>
+                        Profissional com experiência desde 2020 na área administrativa da SF Serviços Médicos Intensive
+                        (UTI),
+                        onde iniciei como auxiliar administrativo e, com dedicação e aprendizado contínuo, atingi o
+                        cargo atual
+                        de técnico administrativo, que exerço até o presente momento. Nesse período, desenvolvi
+                        habilidades em
+                        faturamento de convênios, contas médicas, organização de documentos, controle de processos e
+                        atendimento
+                        a demandas internas com agilidade e precisão.
+                    </p>
+                    <p>
+                        Atualmente, estou ampliando minha atuação na área de tecnologia da informação, cursando Técnico
+                        de
+                        Informática para Internet (SENAI) e graduação em Análise e Desenvolvimento de Sistemas (ADS)
+                        pelo IFRO,
+                        com previsão de conclusão em 2027. Complementando minha formação, venho estudando por meio da
+                        plataforma
+                        Udemy, com cursos voltados à lógica de programação, banco de dados, SQL e redes de computadores.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- EXPERIÊNCIA PROFISSIONAL -->
+        <section class="section" id="experiencia">
+            <div class="container">
+                <h2 class="section-title">Experiência Profissional</h2>
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-marker"></div>
+                        <div class="timeline-content">
+                            <h3 class="job-title">Técnico Administrativo</h3>
+                            <h4 class="company">SF Serviços Médicos Intensive (UTI)</h4>
+                            <span class="period">2020 - Presente</span>
+                            <ul class="job-description">
+                                <li>Faturamento de convênios médicos</li>
+                                <li>Gestão de contas médicas</li>
+                                <li>Organização e controle de documentos</li>
+                                <li>Controle de processos administrativos</li>
+                                <li>Atendimento a demandas internas com agilidade e precisão</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- EDUCAÇÃO -->
+        <section class="section" id="educacao">
+            <div class="container">
+                <h2 class="section-title">Educação</h2>
+                <div class="education-grid">
+                    <div class="education-card">
+                        <div class="education-icon">
+                            <i class="fas fa-graduation-cap"></i>
+                        </div>
+                        <h3 class="course-title">Análise e Desenvolvimento de Sistemas</h3>
+                        <h4 class="institution">Instituto Federal de Rondônia (IFRO)</h4>
+                        <span class="status">Em andamento - Conclusão prevista: 2027</span>
+                    </div>
+
+                    <div class="education-card">
+                        <div class="education-icon">
+                            <i class="fas fa-laptop-code"></i>
+                        </div>
+                        <h3 class="course-title">Técnico de Informática para Internet</h3>
+                        <h4 class="institution">SENAI</h4>
+                        <span class="status">Em andamento</span>
+                    </div>
+
+                    <div class="education-card">
+                        <div class="education-icon">
+                            <i class="fas fa-briefcase"></i>
+                        </div>
+                        <h3 class="course-title">Técnico em Administração</h3>
+                        <h4 class="institution">SENAI</h4>
+                        <span class="status">Concluído</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- HABILIDADES -->
+        <section class="section" id="habilidades">
+            <div class="container">
+                <h2 class="section-title">Habilidades</h2>
+                <div class="skills-grid">
+                    <div class="skills-category">
+                        <h3 class="category-title">Administrativo</h3>
+                        <div class="skill-item">
+                            <span class="skill-name">Faturamento de Convênios</span>
+                            <div class="skill-progress" data-progress="90"></div>
+                        </div>
+                        <div class="skill-item">
+                            <span class="skill-name">Gestão Documental</span>
+                            <div class="skill-progress" data-progress="85"></div>
+                        </div>
+                        <div class="skill-item">
+                            <span class="skill-name">Controle de Processos</span>
+                            <div class="skill-progress" data-progress="88"></div>
+                        </div>
+                    </div>
+
+                    <div class="skills-category">
+                        <h3 class="category-title">Tecnologia</h3>
+                        <div class="skill-item">
+                            <span class="skill-name">Lógica de Programação</span>
+                            <div class="skill-progress" data-progress="75"></div>
+                        </div>
+                        <div class="skill-item">
+                            <span class="skill-name">Banco de Dados / SQL</span>
+                            <div class="skill-progress" data-progress="70"></div>
+                        </div>
+                        <div class="skill-item">
+                            <span class="skill-name">Redes de Computadores</span>
+                            <div class="skill-progress" data-progress="65"></div>
+                        </div>
+                        <div class="skill-item">
+                            <span class="skill-name">Manutenção de Computadores</span>
+                            <div class="skill-progress" data-progress="80"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CERTIFICAÇÕES -->
+        <section class="section" id="certificacoes">
+            <div class="container">
+                <h2 class="section-title">Certificações</h2>
+                <div class="certifications-grid">
+                    <div class="cert-category">
+                        <h3 class="cert-category-title">Tecnologia</h3>
+                        <div class="cert-item">
+                            <i class="fas fa-desktop"></i>
+                            <span>Informática Básica - Lions Clube Canaã</span>
+                        </div>
+                        <div class="cert-item">
+                            <i class="fas fa-laptop"></i>
+                            <span>Informática Avançada - SINTERO</span>
+                        </div>
+                        <div class="cert-item">
+                            <i class="fas fa-tools"></i>
+                            <span>Montagem e Manutenção de Computadores - SINTERO</span>
+                        </div>
+                    </div>
+
+                    <div class="cert-category">
+                        <h3 class="cert-category-title">Saúde</h3>
+                        <div class="cert-item">
+                            <i class="fas fa-home"></i>
+                            <span>Home Care</span>
+                        </div>
+                        <div class="cert-item">
+                            <i class="fas fa-user-friends"></i>
+                            <span>Cuidador de Idosos</span>
+                        </div>
+                        <div class="cert-item">
+                            <i class="fas fa-pills"></i>
+                            <span>Auxiliar de Farmácia</span>
+                        </div>
+                        <div class="cert-item">
+                            <i class="fas fa-flask"></i>
+                            <span>Auxiliar de Laboratório</span>
+                        </div>
+                    </div>
+
+                    <div class="cert-category">
+                        <h3 class="cert-category-title">Outros</h3>
+                        <div class="cert-item">
+                            <i class="fas fa-tractor"></i>
+                            <span>Operador de Trator Agrícola</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- EXPERIÊNCIAS -->
+        <section class="section" id="lideranca">
+            <div class="container">
+                <h2 class="section-title">Experiência em Liderança</h2>
+                <div class="leadership-card">
+                    <div class="leadership-icon">
+                        <i class="fas fa-crown"></i>
+                    </div>
+                    <div class="leadership-content">
+                        <h3 class="leadership-title">Mestre Conselheiro</h3>
+                        <h4 class="leadership-org">Ordem DeMolay</h4>
+                        <p class="leadership-description">
+                            Tive a honra de atuar como Mestre Conselheiro da Ordem DeMolay, organização voltada à
+                            formação de líderes.
+                            O cargo de Mestre Conselheiro é o mais alto dentro de um Capítulo e envolve liderar
+                            atividades, tomar decisões
+                            estratégicas e coordenar ações comunitárias. Essa experiência desenvolveu minhas habilidades
+                            de liderança,
+                            responsabilidade, oratória, empatia e trabalho em equipe — valores que levo para a minha
+                            vida pessoal e profissional.
+                        </p>
+                        <div class="leadership-skills">
+                            <span class="skill-tag">Liderança</span>
+                            <span class="skill-tag">Oratória</span>
+                            <span class="skill-tag">Trabalho em Equipe</span>
+                            <span class="skill-tag">Responsabilidade</span>
+                            <span class="skill-tag">Empatia</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+<!-- FORMULÁRIO PARA CONTATO --> 
+<section class="section" id="contato">
+    <div class="container">
+        <h2 class="section-title">Entre em Contato</h2>
+        <div class="contact-section">
+            <div class="contact-info-card">
+                <h3>Vamos conversar!</h3>
+                <p>Estou sempre em busca de oportunidades e colaborações. Entre em contato comigo!</p>
+                <div class="contact-methods">
+
+                    <div class="contact-method">
+                        <i class="fas fa-envelope"></i>
+                        <a href="mailto:imalherdac@outlook.com" class="contact-link">Email</a>
+                    </div>
+
+                    <div class="contact-method">
+                        <i class="fab fa-linkedin"></i>
+                        <a href="https://www.linkedin.com/in/igor-malher/" target="_blank" rel="noopener" class="contact-link">LinkedIn</a>
+                    </div>
+
+                    <div class="contact-method">
+                        <i class="fas fa-phone"></i>
+                        <a href="https://wa.me/5569999891210?text=Ol%C3%A1!%20Vi%20seu%20curr%C3%ADculo%20online%20e%20gostaria%20de%20conversar%20sobre%20poss%C3%ADveis%20oportunidades%20na%20%C3%A1rea%20de%20Tecnologia%20da%20Informa%C3%A7%C3%A3o.%0A" target="_blank" rel="noopener" class="contact-link">Telefone / WhatsApp</a>
+                    </div>
+
+                </div>
+            </div>
+
+                    <!-- FORMULÁRIO DE CONTATO COM VALIDAÇÃO -->
+                    <form class="contact-form" id="contactForm" novalidate>
+                        <div class="form-group">
+                            <label for="name">Nome Completo *</label>
+                            <input type="text" id="name" name="name" required>
+                            <span class="error-message" id="nameError"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email">Email *</label>
+                            <input type="email" id="email" name="email" required>
+                            <span class="error-message" id="emailError"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="phone">Telefone</label>
+                            <input type="tel" id="phone" name="phone">
+                            <span class="error-message" id="phoneError"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="name">Sua função atualmente (exemplo: senior, aluno...) *</label>
+                            <input type="text" id="name" name="name" required>
+                            <span class="error-message" id="nameError"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="age">Idade</label>
+                            <input type="number" id="age" name="age" min="1" max="120">
+                            <span class="error-message" id="ageError"></span>
+                        </div>
+
+                        <!-- RADIOBUTTON(fase de teste)  - TIPO DE CONTATO -->
+                        <div class="form-group">
+                            <label class="group-label">Tipo de Contato *</label>
+                            <div class="radio-group">
+                                <label class="radio-label">
+                                    <input type="radio" name="contactType" value="trabalho" required>
+                                    <span class="radio-custom"></span>
+                                    Oportunidade de Trabalho
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="contactType" value="colaboracao" required>
+                                    <span class="radio-custom"></span>
+                                    Colaboração/Projeto
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="contactType" value="networking" required>
+                                    <span class="radio-custom"></span>
+                                    Networking
+                                </label>
+                             </div>
+                            <span class="error-message" id="contactTypeError"></span>
+                        </div>
+
+                        <!-- CHECKBOX(fase de teste) - ÁREAS DE INTERESSE -->
+                        <div class="form-group">
+                            <label class="group-label">Áreas de Interesse</label>
+                            <div class="checkbox-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="interests" value="administracao">
+                                    <span class="checkbox-custom"></span>
+                                    Administração
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="interests" value="ti">
+                                    <span class="checkbox-custom"></span>
+                                    Tecnologia da Informação
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="interests" value="programacao">
+                                    <span class="checkbox-custom"></span>
+                                    Programação
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="interests" value="redes">
+                                    <span class="checkbox-custom"></span>
+                                    Redes de Computadores
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="interests" value="suporte">
+                                    <span class="checkbox-custom"></span>
+                                    Suporte Técnico
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- SELECT - COMO CONHECEU -->
+                        <div class="form-group">
+                            <label for="howFound">Como me conheceu?</label>
+                            <select id="howFound" name="howFound">
+                                <option value="">Selecione uma opção</option>
+                                <option value="linkedin">LinkedIn</option>
+                                <option value="github">GitHub</option>
+                                <option value="indicacao">Indicação</option>
+                                <option value="site">Site/Portfólio</option>
+                                <option value="evento">Evento/Conferência</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="message">Mensagem *</label>
+                            <textarea id="message" name="message" rows="5" required
+                                placeholder="Escreva sua mensagem aqui..."></textarea>
+                            <span class="error-message" id="messageError"></span>
+                        </div>
+
+                        <button type="submit" class="submit-btn">
+                            <i class="fas fa-paper-plane"></i>
+                            Enviar Mensagem
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- RODAPÉ -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <p>&copy; 2025 Igor Malher. Todos os direitos reservados.</p>
+<div class="social-links">
+
+    <!-- LINKS DAS REDES SOCIAIS -->
+    <a href="https://www.linkedin.com/in/igor-malher/" class="social-link" target="_blank" rel="noopener">
+        <i class="fab fa-linkedin"></i>
+    </a>
+    <a href="https://github.com/IMalherdaC" class="social-link" target="_blank" rel="noopener">
+        <i class="fab fa-github"></i>
+    </a>
+    <a href="https://www.instagram.com/srmalher/" class="social-link" target="_blank" rel="noopener">
+        <i class="fab fa-instagram"></i>
+    </a>
+</div>
+
+    </footer>
+
+    <!-- BOTÃO VOLTAR AO TOPO -->
+    <button class="scroll-top" id="scrollTop">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- SCRIPTS JAVASCRIPT -->
+    <script src="js/script.js"></script>
+    <script src="js/form_validation.js"></script>
+ </body>
+</html>

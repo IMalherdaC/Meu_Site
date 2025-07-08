@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jogo Educativo - Complete as Sílabas</title>
+    
+    <!-- Link para o arquivo CSS da aplicação educativa -->
+    <link rel="stylesheet" href="css/educational_app.css">
+    
+    <!-- Font Awesome para ícones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One:wght@400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- HEADER DA APLICAÇÃO -->
+    <header class="game-header">
+        <div class="container">
+            <div class="header-content">
+                <h1 class="game-title">
+                    <i class="fas fa-puzzle-piece"></i>
+                    Complete as Sílabas
+                </h1>
+                <p class="game-subtitle">Arraste as vogais para completar as palavras!</p>
+                
+                <!-- BOTÃO VOLTAR PARA O PORTFÓLIO -->
+                <a href="index.html" class="back-btn">
+                    <i class="fas fa-arrow-left"></i>
+                    Voltar ao Portfólio
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- ÁREA DE INFORMAÇÕES DO JOGO -->
+    <section class="game-info">
+        <div class="container">
+            <div class="info-grid">
+                <div class="score-card">
+                    <i class="fas fa-star"></i>
+                    <div class="score-content">
+                        <span class="score-label">Pontuação</span>
+                        <span class="score-value" id="scoreValue">0</span>
+                    </div>
+                </div>
+                
+                <div class="level-card">
+                    <i class="fas fa-trophy"></i>
+                    <div class="level-content">
+                        <span class="level-label">Nível</span>
+                        <span class="level-value" id="levelValue">1</span>
+                    </div>
+                </div>
+                
+                <div class="progress-card">
+                    <i class="fas fa-chart-line"></i>
+                    <div class="progress-content">
+                        <span class="progress-label">Progresso</span>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progressFill"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="timer-card">
+                    <i class="fas fa-clock"></i>
+                    <div class="timer-content">
+                        <span class="timer-label">Tempo</span>
+                        <span class="timer-value" id="timerValue">00:00</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ÁREA PRINCIPAL DO JOGO -->
+    <main class="game-main">
+        <div class="container">
+            <!-- INSTRUÇÕES DO JOGO -->
+            <div class="instructions" id="instructions">
+                <div class="instructions-content">
+                    <h2>Como Jogar</h2>
+                    <div class="instructions-grid">
+                        <div class="instruction-item">
+                            <i class="fas fa-hand-pointer"></i>
+                            <p>Arraste as vogais das caixas abaixo</p>
+                        </div>
+                        <div class="instruction-item">
+                            <i class="fas fa-puzzle-piece"></i>
+                            <p>Solte nas lacunas das palavras</p>
+                        </div>
+                        <div class="instruction-item">
+                            <i class="fas fa-check-circle"></i>
+                            <p>Complete todas as palavras para avançar</p>
+                        </div>
+                        <div class="instruction-item">
+                            <i class="fas fa-star"></i>
+                            <p>Ganhe pontos por cada acerto</p>
+                        </div>
+                    </div>
+                    <button class="start-btn" id="startBtn">
+                        <i class="fas fa-play"></i>
+                        Começar Jogo
+                    </button>
+                </div>
+            </div>
+
+            <!-- ÁREA DO JOGO -->
+            <div class="game-area" id="gameArea" style="display: none;">
+                <!-- GRID DE PALAVRAS -->
+                <div class="words-grid" id="wordsGrid">
+                    <!-- As palavras serão inseridas dinamicamente aqui -->
+                </div>
+
+                <!-- ÁREA DE VOGAIS DISPONÍVEIS -->
+                <div class="vowels-area">
+                    <h3 class="vowels-title">Vogais Disponíveis</h3>
+                    <div class="vowels-container" id="vowelsContainer">
+                        <!-- As vogais serão inseridas dinamicamente aqui -->
+                    </div>
+                </div>
+
+                <!-- CONTROLES DO JOGO -->
+                <div class="game-controls">
+                    <button class="control-btn reset-btn" id="resetBtn">
+                        <i class="fas fa-redo"></i>
+                        Reiniciar Nível
+                    </button>
+                    
+                    <button class="control-btn hint-btn" id="hintBtn">
+                        <i class="fas fa-lightbulb"></i>
+                        Dica
+                    </button>
+                    
+                    <button class="control-btn check-btn" id="checkBtn">
+                        <i class="fas fa-check"></i>
+                        Verificar Respostas
+                    </button>
+                </div>
+            </div>
+
+            <!-- TELA DE RESULTADO -->
+            <div class="result-screen" id="resultScreen" style="display: none;">
+                <div class="result-content">
+                    <div class="result-icon" id="resultIcon">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                    <h2 class="result-title" id="resultTitle">Parabéns!</h2>
+                    <p class="result-message" id="resultMessage">Você completou o nível com sucesso!</p>
+                    
+                    <div class="result-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">Pontuação</span>
+                            <span class="stat-value" id="finalScore">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Tempo</span>
+                            <span class="stat-value" id="finalTime">00:00</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Acertos</span>
+                            <span class="stat-value" id="finalAccuracy">100%</span>
+                        </div>
+                    </div>
+                    
+                    <div class="result-actions">
+                        <button class="action-btn next-btn" id="nextLevelBtn">
+                            <i class="fas fa-arrow-right"></i>
+                            Próximo Nível
+                        </button>
+                        <button class="action-btn replay-btn" id="replayBtn">
+                            <i class="fas fa-redo"></i>
+                            Jogar Novamente
+                        </button>
+                        <button class="action-btn menu-btn" id="menuBtn">
+                            <i class="fas fa-home"></i>
+                            Menu Principal
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- MODAL DE DICA -->
+    <div class="modal" id="hintModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>💡 Dica</h3>
+                <button class="modal-close" id="closeHintModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p id="hintText">Esta é uma dica para te ajudar!</p>
+                <div class="hint-image" id="hintImage">
+                    <!-- Imagem da dica será inserida aqui -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE CONFIGURAÇÕES -->
+    <div class="modal" id="settingsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>⚙️ Configurações</h3>
+                <button class="modal-close" id="closeSettingsModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="setting-item">
+                    <label for="soundToggle">Som</label>
+                    <input type="checkbox" id="soundToggle" checked>
+                </div>
+                <div class="setting-item">
+                    <label for="difficultySelect">Dificuldade</label>
+                    <select id="difficultySelect">
+                        <option value="easy">Fácil</option>
+                        <option value="medium" selected>Médio</option>
+                        <option value="hard">Difícil</option>
+                    </select>
+                </div>
+                <div class="setting-item">
+                    <label for="timerToggle">Cronômetro</label>
+                    <input type="checkbox" id="timerToggle" checked>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- BOTÃO DE CONFIGURAÇÕES -->
+    <button class="settings-btn" id="settingsBtn">
+        <i class="fas fa-cog"></i>
+    </button>
+
+    <!-- EFEITOS VISUAIS -->
+    <div class="particles-container" id="particlesContainer"></div>
+    
+    <!-- ÁREA DE FEEDBACK VISUAL -->
+    <div class="feedback-area" id="feedbackArea"></div>
+
+    <!-- SCRIPTS JAVASCRIPT -->
+    <script src="js/educational_app.js"></script>
+</body>
+</html>
