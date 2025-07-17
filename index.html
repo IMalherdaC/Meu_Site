@@ -1,59 +1,100 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Page - IMalherDac</title>
-
-    <!-- Link para o arquivo CSS principal -->
-    <link rel="stylesheet" href="css/style.css">
-
-    <!-- Font Awesome para ícones -->
+    <link rel="stylesheet" href="./css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-    <!-- Estilo extra para scroll suave -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Share+Tech+Mono:wght@400&display=swap" rel="stylesheet">
     <style>
+        /* Configuração básica para scroll suave */
         html {
             scroll-behavior: smooth;
         }
-
         .navbar {
             position: sticky;
             top: 0;
             z-index: 1000;
-            background-color: #fff;
-        }
-
-        .skill-progress {
-            height: 8px;
-            background-color: #ccc;
-            border-radius: 5px;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .skill-progress::after {
-            content: '';
-            position: absolute;
-            height: 100%;
-            background-color: #4CAF50;
-            left: 0;
-            top: 0;
-            width: 0;
-            transition: width 1s ease-in-out;
         }
     </style>
 </head>
 
-    <!-- NAVEGAÇÃO PRINCIPAL -->
+<body>
+    <!-- Player de Música Melhorado - Implementação própria com JavaScript -->
+    <div class="music-player" id="musicPlayer">
+        <div class="player-controls">
+            <!-- Botão para mostrar/esconder o player -->
+            <button id="togglePlayer" class="toggle-btn" title="Mostrar/Esconder Player">
+                <i class="fas fa-music"></i>
+            </button>
+            
+            <!-- Controles do player (inicialmente escondidos) -->
+            <div class="player-content" id="playerContent">
+                <!-- Informações da música atual -->
+                <div class="track-info">
+                    <span id="trackName">Música 1</span>
+                </div>
+                
+                <!-- Controles de reprodução -->
+                <div class="playback-controls">
+                    <button id="prevTrack" class="control-btn" title="Música Anterior">
+                        <i class="fas fa-step-backward"></i>
+                    </button>
+                    <button id="playPause" class="control-btn play-btn" title="Play/Pause">
+                        <i class="fas fa-play"></i>
+                    </button>
+                    <button id="nextTrack" class="control-btn" title="Próxima Música">
+                        <i class="fas fa-step-forward"></i>
+                    </button>
+                </div>
+                
+                <!-- Controle de volume -->
+                <div class="volume-control">
+                    <i class="fas fa-volume-down"></i>
+                    <input type="range" id="volumeSlider" class="volume-slider" min="0" max="100" value="50">
+                    <i class="fas fa-volume-up"></i>
+                </div>
+                
+                <!-- Seletor de música -->
+                <div class="track-selector">
+                    <select id="trackSelect" class="track-select">
+                        <option value="0">Música 1</option>
+                        <option value="1">Música 2</option>
+                        <option value="2">Música 3</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Elementos de áudio para as diferentes músicas -->
+    <audio id="backgroundMusic1" loop>
+        <source src="./audio/music1.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="backgroundMusic2" loop>
+        <source src="./audio/music2.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="backgroundMusic3" loop>
+        <source src="./audio/music3.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- Áudios para efeitos sonoros do jogo e formulário -->
+    <audio id="winnerSound" preload="auto">
+        <source src="./audio/winners..mp3" type="audio/mpeg">
+    </audio>
+    <audio id="defeatSound" preload="auto">
+        <source src="./audio/defeat.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- Sistema de notificações melhorado -->
+    <div id="notificationContainer" class="notification-container"></div>
+
     <nav class="navbar" id="navbar">
         <div class="container">
             <ul class="nav-menu">
                 <li><a href="#sobre" class="nav-link">Sobre</a></li>
+                <li><a href="#video" class="nav-link">Vídeo</a></li>
                 <li><a href="#experiencia" class="nav-link">Experiência</a></li>
                 <li><a href="#educacao" class="nav-link">Educação</a></li>
                 <li><a href="#habilidades" class="nav-link">Habilidades</a></li>
@@ -61,15 +102,13 @@
                 <li><a href="#lideranca" class="nav-link">Liderança</a></li>
                 <li><a href="#contato" class="nav-link">Contato</a></li>
                 <li><a href="educational_app.html" class="nav-link app-link">🎮 Jogo Educativo</a></li>
+                <button id="toggle-theme">🌙 Modo Escuro</button>
             </ul>
         </div>
     </nav>
 
-<body>
-    <!-- INFORMAÇÕES PESSOAIS -->
     <header class="header" id="header">
         <div class="container">
-            <!-- FOTO DE PERFIL -->
             <div class="profile-section">
                 <img src="img/perfil.jpg" alt="Foto Igor Malher" class="profile-photo">
             </div>
@@ -98,54 +137,60 @@
         </div>
     </header>
 
-    <!-- SCRIPTS -->
-    <script>
-        // Animação das barras de progresso
-        window.addEventListener("DOMContentLoaded", () => {
-            const bars = document.querySelectorAll(".skill-progress");
-            bars.forEach(bar => {
-                const value = bar.getAttribute("data-progress");
-                bar.querySelector("::after");
-                bar.style.setProperty("--progress", value + "%");
-                bar.style.setProperty("width", value + "%");
-                bar.style.position = "relative";
-            });
-        });
-    </script>
-</body>
-
-    <!-- CONTEÚDO PRINCIPAL -->
     <main class="main-content">
-        <!-- SOBRE MIM -->
         <section class="section" id="sobre">
             <div class="container">
                 <h2 class="section-title">Sobre Mim</h2>
                 <div class="about-content">
                     <p>
-                        Profissional com experiência desde 2020 na área administrativa da SF Serviços Médicos Intensive
-                        (UTI),
-                        onde iniciei como auxiliar administrativo e, com dedicação e aprendizado contínuo, atingi o
-                        cargo atual
-                        de técnico administrativo, que exerço até o presente momento. Nesse período, desenvolvi
-                        habilidades em
-                        faturamento de convênios, contas médicas, organização de documentos, controle de processos e
-                        atendimento
+                        Profissional com experiência desde 2020 na área administrativa da SF Serviços Médicos Intensive (UTI),
+                        onde iniciei como auxiliar administrativo e, com dedicação e aprendizado contínuo, atingi o cargo atual
+                        de técnico administrativo, que exerço até o presente momento. Nesse período, desenvolvi habilidades em
+                        faturamento de convênios, contas médicas, organização de documentos, controle de processos e atendimento
                         a demandas internas com agilidade e precisão.
                     </p>
                     <p>
-                        Atualmente, estou ampliando minha atuação na área de tecnologia da informação, cursando Técnico
-                        de
-                        Informática para Internet (SENAI) e graduação em Análise e Desenvolvimento de Sistemas (ADS)
-                        pelo IFRO,
-                        com previsão de conclusão em 2027. Complementando minha formação, venho estudando por meio da
-                        plataforma
+                        Atualmente, estou ampliando minha atuação na área de tecnologia da informação, cursando Técnico de
+                        Informática para Internet (SENAI) e graduação em Análise e Desenvolvimento de Sistemas (ADS) pelo IFRO,
+                        com previsão de conclusão em 2027. Complementando minha formação, venho estudando por meio da plataforma
                         Udemy, com cursos voltados à lógica de programação, banco de dados, SQL e redes de computadores.
                     </p>
                 </div>
             </div>
         </section>
 
-        <!-- EXPERIÊNCIA PROFISSIONAL -->
+        <section class="section" id="video">
+            <div class="container">
+                <h2 class="section-title">Apresentação em Vídeo</h2>
+                <div class="video-section">
+                    <h3 class="video-title">Explicação do Projeto</h3>
+                    <div class="video-container" style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;">
+                <iframe src="https://drive.google.com/file/d/1ggSBn4_w0TSdQh7u-eppSSj9wPAJj-Bd/preview" 
+                     style="position:absolute;top:0;left:0;width:100%;height:100%;" 
+                     frameborder="0" allow="autoplay; encrypted-media" allowfullscreen>
+                </iframe>
+            </div>
+
+                    <p class="video-description">
+                        Neste vídeo, apresento sobre este projeto, mais especificamente sobre o 
+                        jogo educativo e meus objetivos e metas na área de tecnologia.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="linguagens">
+            <div class="container">
+                <h2 class="section-title">STACK'S</h2>
+                <div class="carousel-container">
+                    <div class="carousel-track" id="carouselTrack"></div>
+                    <button class="carousel-button prev" id="carouselPrev">&#10094;</button>
+                    <button class="carousel-button next" id="carouselNext">&#10095;</button>
+                    <div class="carousel-dots" id="carouselDots"></div>
+                </div>
+            </div>
+        </section>
+
         <section class="section" id="experiencia">
             <div class="container">
                 <h2 class="section-title">Experiência Profissional</h2>
@@ -169,7 +214,6 @@
             </div>
         </section>
 
-        <!-- EDUCAÇÃO -->
         <section class="section" id="educacao">
             <div class="container">
                 <h2 class="section-title">Educação</h2>
@@ -204,7 +248,6 @@
             </div>
         </section>
 
-        <!-- HABILIDADES -->
         <section class="section" id="habilidades">
             <div class="container">
                 <h2 class="section-title">Habilidades</h2>
@@ -248,7 +291,6 @@
             </div>
         </section>
 
-        <!-- CERTIFICAÇÕES -->
         <section class="section" id="certificacoes">
             <div class="container">
                 <h2 class="section-title">Certificações</h2>
@@ -300,7 +342,6 @@
             </div>
         </section>
 
-        <!-- EXPERIÊNCIAS -->
         <section class="section" id="lideranca">
             <div class="container">
                 <h2 class="section-title">Experiência em Liderança</h2>
@@ -312,14 +353,10 @@
                         <h3 class="leadership-title">Mestre Conselheiro</h3>
                         <h4 class="leadership-org">Ordem DeMolay</h4>
                         <p class="leadership-description">
-                            Tive a honra de atuar como Mestre Conselheiro da Ordem DeMolay, organização voltada à
-                            formação de líderes.
-                            O cargo de Mestre Conselheiro é o mais alto dentro de um Capítulo e envolve liderar
-                            atividades, tomar decisões
-                            estratégicas e coordenar ações comunitárias. Essa experiência desenvolveu minhas habilidades
-                            de liderança,
-                            responsabilidade, oratória, empatia e trabalho em equipe — valores que levo para a minha
-                            vida pessoal e profissional.
+                            Tive a honra de atuar como Mestre Conselheiro da Ordem DeMolay, organização voltada à formação de líderes.
+                            O cargo de Mestre Conselheiro é o mais alto dentro de um Capítulo e envolve liderar atividades, tomar decisões
+                            estratégicas e coordenar ações comunitárias. Essa experiência desenvolveu minhas habilidades de liderança,
+                            responsabilidade, oratória, empatia e trabalho em equipe — valores que levo para a minha vida pessoal e profissional.
                         </p>
                         <div class="leadership-skills">
                             <span class="skill-tag">Liderança</span>
@@ -333,37 +370,31 @@
             </div>
         </section>
 
-<!-- FORMULÁRIO PARA CONTATO --> 
-<section class="section" id="contato">
-    <div class="container">
-        <h2 class="section-title">Entre em Contato</h2>
-        <div class="contact-section">
-            <div class="contact-info-card">
-                <h3>Vamos conversar!</h3>
-                <p>Estou sempre em busca de oportunidades e colaborações. Entre em contato comigo!</p>
-                <div class="contact-methods">
-
-                    <div class="contact-method">
-                        <i class="fas fa-envelope"></i>
-                        <a href="mailto:imalherdac@outlook.com" class="contact-link">Email</a>
+        <section class="section" id="contato">
+            <div class="container">
+                <h2 class="section-title">Entre em Contato</h2>
+                <div class="contact-section">
+                    <div class="contact-info-card">
+                        <h3>Vamos conversar!</h3>
+                        <p>Estou sempre em busca de oportunidades e colaborações. Entre em contato comigo!</p>
+                        <div class="contact-methods">
+                            <div class="contact-method">
+                                <i class="fas fa-envelope"></i>
+                                <a href="mailto:imalherdac@outlook.com" class="contact-link">Email</a>
+                            </div>
+                            <div class="contact-method">
+                                <i class="fab fa-linkedin"></i>
+                                <a href="https://www.linkedin.com/in/igor-malher/" target="_blank" rel="noopener" class="contact-link">LinkedIn</a>
+                            </div>
+                            <div class="contact-method">
+                                <i class="fas fa-phone"></i>
+                                <a href="https://wa.me/5569999891210?text=Ol%C3%A1!%20Vi%20seu%20curr%C3%ADculo%20online%20e%20gostaria%20de%20conversar%20sobre%20poss%C3%ADveis%20oportunidades%20na%20%C3%A1rea%20de%20Tecnologia%20da%20Informa%C3%A7%C3%A3o.%0A" target="_blank" rel="noopener" class="contact-link">Telefone / WhatsApp</a>
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="contact-method">
-                        <i class="fab fa-linkedin"></i>
-                        <a href="https://www.linkedin.com/in/igor-malher/" target="_blank" rel="noopener" class="contact-link">LinkedIn</a>
-                    </div>
-
-                    <div class="contact-method">
-                        <i class="fas fa-phone"></i>
-                        <a href="https://wa.me/5569999891210?text=Ol%C3%A1!%20Vi%20seu%20curr%C3%ADculo%20online%20e%20gostaria%20de%20conversar%20sobre%20poss%C3%ADveis%20oportunidades%20na%20%C3%A1rea%20de%20Tecnologia%20da%20Informa%C3%A7%C3%A3o.%0A" target="_blank" rel="noopener" class="contact-link">Telefone / WhatsApp</a>
-                    </div>
-
-                </div>
-            </div>
-
-                    <!-- FORMULÁRIO DE CONTATO COM VALIDAÇÃO -->
-
-                    <form action="https://formspree.io/f/xkgblqvy" method="POST">
+                    <!-- Formulário funcional melhorado -->
+                    <form id="contactForm" class="contact-form">
                         <div class="form-group">
                             <label for="name">Nome Completo *</label>
                             <input type="text" id="name" name="name" required>
@@ -383,9 +414,9 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="name">Sua função atualmente (exemplo: senior, aluno...) *</label>
-                            <input type="text" id="name" name="name" required>
-                            <span class="error-message" id="nameError"></span>
+                            <label for="userRole">Sua função atualmente (exemplo: senior, aluno...) *</label>
+                            <input type="text" id="userRole" name="userRole" required>
+                            <span class="error-message" id="userRoleError"></span>
                         </div>
 
                         <div class="form-group">
@@ -394,7 +425,6 @@
                             <span class="error-message" id="ageError"></span>
                         </div>
 
-                        <!-- RADIOBUTTON(fase de teste)  - TIPO DE CONTATO -->
                         <div class="form-group">
                             <label class="group-label">Tipo de Contato *</label>
                             <div class="radio-group">
@@ -413,11 +443,10 @@
                                     <span class="radio-custom"></span>
                                     Networking
                                 </label>
-                             </div>
+                            </div>
                             <span class="error-message" id="contactTypeError"></span>
                         </div>
 
-                        <!-- CHECKBOX(fase de teste) - ÁREAS DE INTERESSE -->
                         <div class="form-group">
                             <label class="group-label">Áreas de Interesse</label>
                             <div class="checkbox-group">
@@ -449,7 +478,6 @@
                             </div>
                         </div>
 
-                        <!-- SELECT - COMO CONHECEU -->
                         <div class="form-group">
                             <label for="howFound">Como me conheceu?</label>
                             <select id="howFound" name="howFound">
@@ -464,8 +492,7 @@
 
                         <div class="form-group">
                             <label for="message">Mensagem *</label>
-                            <textarea id="message" name="message" rows="5" required
-                                placeholder="Escreva sua mensagem aqui..."></textarea>
+                            <textarea id="message" name="message" rows="5" required placeholder="Escreva sua mensagem aqui..."></textarea>
                             <span class="error-message" id="messageError"></span>
                         </div>
 
@@ -479,34 +506,50 @@
         </section>
     </main>
 
-    <!-- RODAPÉ -->
-    <footer class="footer">
+
+    <!-- Logos das instituições no rodapé -->
+                <div class="footer-logos">
+                    <img src="./img/ifroAri.jpeg" alt="IFRO Ariquemes" class="institution-logo">
+                    <img src="./img/ads_logo.png" alt="ADS Logo" class="institution-logo">
+                    <img src="./img/ads2025.jpeg" alt="ADS 2025" class="institution-logo">
+                </div>
+
+
+        <button class="scroll-top" id="scrollTop">
+        <i class="fas fa-arrow-up"></i>
+        </button>
+
+
+    <!-- Rodapé da página -->
+    <footer>
         <div class="container">
             <div class="footer-content">
-                <p>&copy; 2025 Igor Malher. Todos os direitos reservados.</p>
-<div class="social-links">
-
-    <!-- LINKS DAS REDES SOCIAIS -->
-    <a href="https://www.linkedin.com/in/igor-malher/" class="social-link" target="_blank" rel="noopener">
-        <i class="fab fa-linkedin"></i>
-    </a>
-    <a href="https://github.com/IMalherdaC" class="social-link" target="_blank" rel="noopener">
-        <i class="fab fa-github"></i>
-    </a>
-    <a href="https://www.instagram.com/srmalher/" class="social-link" target="_blank" rel="noopener">
-        <i class="fab fa-instagram"></i>
-    </a>
-</div>
-
+                <div class="footer-left">
+                    <p>&copy; 2025 Igor Malher - Todos os direitos reservados.</p>
+                    <div class="social-links">
+                        <a href="https://www.linkedin.com/in/igor-malher/" class="social-link" target="_blank" rel="noopener">
+                            <i class="fab fa-linkedin"></i>
+                        </a>
+                        <a href="https://github.com/IMalherdaC" class="social-link" target="_blank" rel="noopener">
+                            <i class="fab fa-github"></i>
+                        </a>
+                        <a href="https://www.instagram.com/srmalher/" class="social-link" target="_blank" rel="noopener">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
     </footer>
 
-    <!-- BOTÃO VOLTAR AO TOPO -->
-    <button class="scroll-top" id="scrollTop">
-        <i class="fas fa-arrow-up"></i>
-    </button>
 
-    <!-- SCRIPTS JAVASCRIPT -->
-    <script src="js/script.js"></script>
-    <script src="js/form_validation.js"></script>
- </body>
+    <!-- Scripts organizados - como aprendido nas aulas -->
+    <script src="./js/script.js"></script>
+    <script src="./js/form_validation.js"></script>
+    <script src="./js/carousel.js"></script>
+    <script src="./js/theme_toggle.js"></script>
+    <script src="./js/audio_controller.js"></script>
+
+</body>
 </html>
+

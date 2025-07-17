@@ -3,247 +3,265 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jogo Educativo - Complete as Sílabas</title>
+    <title>Jogo Educativo - Formação de Palavras</title>
     
-    <!-- Link para o arquivo CSS da aplicação educativa -->
+    <!-- CSS do jogo educativo -->
     <link rel="stylesheet" href="css/educational_app.css">
     
     <!-- Font Awesome para ícones -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One:wght@400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" 
+    href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%20100%20100%27%3E%3Ctext%20y%3D%27.9em%27%20font-size%3D%2790%27%3E%F0%9F%8E%AE%3C/text%3E%3C/svg%3E">
 </head>
 <body>
-    <!-- HEADER DA APLICAÇÃO -->
+    <!-- ===== PLAYER DE MÚSICA NO CABEÇALHO ===== -->
+    <div class="music-player-header">
+        <button id="musicPlayerToggle" class="music-toggle-btn" title="Player de Música">
+            <i class="fas fa-music"></i>
+        </button>
+        
+        <div id="musicPlayerControls" class="music-controls">
+            <button id="prevTrack" class="music-btn" title="Música Anterior">
+                <i class="fas fa-step-backward"></i>
+            </button>
+            
+            <button id="playPauseBtn" class="music-btn play-pause" title="Play/Pause">
+                <i class="fas fa-play"></i>
+            </button>
+            
+            <button id="nextTrack" class="music-btn" title="Próxima Música">
+                <i class="fas fa-step-forward"></i>
+            </button>
+            
+            <select id="trackSelector" class="track-selector">
+                <option value="0">Música 1</option>
+                <option value="1">Música 2</option>
+                <option value="2">Música 3</option>
+            </select>
+            
+            <input type="range" id="volumeSlider" class="volume-slider" min="0" max="100" value="50">
+        </div>
+        
+        <audio id="backgroundMusic" loop>
+    <source src="audio/track1.mp3" type="audio/mpeg">
+</audio>
+
+    </div>
+
+    <!-- ===== BOTÃO DE RETORNO ===== -->
+    <div class="return-button-container">
+        <a href="index.html" class="return-btn" title="Voltar ao Portfólio">
+            <i class="fas fa-arrow-left"></i>
+            <span>Voltar ao Portfólio</span>
+        </a>
+    </div>
+
+    <!-- ===== CABEÇALHO DO JOGO ===== -->
     <header class="game-header">
-        <div class="container">
-            <div class="header-content">
-                <h1 class="game-title">
-                    <i class="fas fa-puzzle-piece"></i>
-                    Complete as Sílabas
-                </h1>
-                <p class="game-subtitle">Arraste as vogais para completar as palavras!</p>
-                
-                <!-- BOTÃO VOLTAR PARA O PORTFÓLIO -->
-                <a href="index.html" class="back-btn">
-                    <i class="fas fa-arrow-left"></i>
-                    Voltar ao Portfólio
-                </a>
-            </div>
+        <div class="header-content">
+            <h1 class="game-title">
+                <i class="fas fa-graduation-cap"></i>
+                Jogo Educativo - Formação de Palavras
+            </h1>
+            <p class="game-subtitle">Aprenda brincando com sílabas!</p>
         </div>
     </header>
 
-    <!-- ÁREA DE INFORMAÇÕES DO JOGO -->
+    <!-- ===== INFORMAÇÕES DO JOGO ===== -->
     <section class="game-info">
-        <div class="container">
-            <div class="info-grid">
-                <div class="score-card">
-                    <i class="fas fa-star"></i>
-                    <div class="score-content">
-                        <span class="score-label">Pontuação</span>
-                        <span class="score-value" id="scoreValue">0</span>
-                    </div>
-                </div>
-                
-                <div class="level-card">
-                    <i class="fas fa-trophy"></i>
-                    <div class="level-content">
-                        <span class="level-label">Nível</span>
-                        <span class="level-value" id="levelValue">1</span>
-                    </div>
-                </div>
-                
-                <div class="progress-card">
-                    <i class="fas fa-chart-line"></i>
-                    <div class="progress-content">
-                        <span class="progress-label">Progresso</span>
-                        <div class="progress-bar">
-                            <div class="progress-fill" id="progressFill"></div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="timer-card">
-                    <i class="fas fa-clock"></i>
-                    <div class="timer-content">
-                        <span class="timer-label">Tempo</span>
-                        <span class="timer-value" id="timerValue">00:00</span>
-                    </div>
-                </div>
+        <div class="info-cards">
+            <div class="info-card">
+                <div class="info-label">Nível:</div>
+                <div class="info-value" id="currentLevel">1</div>
+            </div>
+            
+            <div class="info-card">
+                <div class="info-label">Pontos:</div>
+                <div class="info-value" id="currentScore">0</div>
+            </div>
+            
+            <div class="info-card">
+                <div class="info-label">Palavras:</div>
+                <div class="info-value" id="wordsCompleted">0</div>
+            </div>
+        </div>
+        
+        <!-- Cronômetro (aparece a partir do nível 3) -->
+        <div id="timerContainer" class="timer-container" style="display: none;">
+            <div class="timer-label">Tempo:</div>
+            <div class="timer-value" id="gameTimer">60s</div>
+        </div>
+    </section>
+
+    <!-- ===== ÁREA DE JOGO ===== -->
+    <main class="game-container">
+        <!-- Container das palavras para completar -->
+        <section class="words-section">
+            <h2 class="section-title">
+                <i class="fas fa-puzzle-piece"></i>
+                Complete as Palavras
+            </h2>
+            <div id="wordsContainer" class="words-container">
+                <!-- Palavras serão geradas dinamicamente pelo JavaScript -->
+            </div>
+        </section>
+
+        <!-- Container das sílabas disponíveis -->
+        <section class="syllables-section">
+            <h2 class="section-title">
+                <i class="fas fa-cubes"></i>
+                Sílabas Disponíveis
+            </h2>
+            <div id="syllablesContainer" class="syllables-container">
+                <!-- Sílabas serão geradas dinamicamente pelo JavaScript -->
+            </div>
+        </section>
+    </main>
+
+    <!-- ===== CONTROLES DO JOGO ===== -->
+    <section class="game-controls">
+        <button id="startGameBtn" class="game-btn primary">
+            <i class="fas fa-play"></i>
+            Iniciar Jogo
+        </button>
+        
+        <button id="resetGameBtn" class="game-btn secondary" style="display: none;">
+            <i class="fas fa-redo"></i>
+            Reiniciar
+        </button>
+        
+        
+        <button id="nextLevelBtn" class="game-btn success" style="display: none;">
+            <i class="fas fa-arrow-right"></i>
+            Próximo Nível
+        </button>
+        
+        <button id="hintBtn" class="game-btn info" style="display: none;">
+            <i class="fas fa-lightbulb"></i>
+            Dica (2)
+        </button>
+    </section>
+
+    <!-- ===== FEEDBACK E PROGRESSO ===== -->
+    <section class="game-feedback">
+        <div id="gameMessage" class="game-message">
+            <p>Clique em "Iniciar Jogo" para começar sua jornada de aprendizado!</p>
+        </div>
+        
+        <div class="progress-container">
+            <div class="progress-label">PROGRESSO DO NÍVEL</div>
+            <div class="progress-bar">
+                <div id="levelProgress" class="progress-fill"></div>
+                <div id="progressText" class="progress-text">0%</div>
             </div>
         </div>
     </section>
 
-    <!-- ÁREA PRINCIPAL DO JOGO -->
-    <main class="game-main">
-        <div class="container">
-            <!-- INSTRUÇÕES DO JOGO -->
-            <div class="instructions" id="instructions">
-                <div class="instructions-content">
-                    <h2>Como Jogar</h2>
-                    <div class="instructions-grid">
-                        <div class="instruction-item">
-                            <i class="fas fa-hand-pointer"></i>
-                            <p>Arraste as vogais das caixas abaixo</p>
-                        </div>
-                        <div class="instruction-item">
-                            <i class="fas fa-puzzle-piece"></i>
-                            <p>Solte nas lacunas das palavras</p>
-                        </div>
-                        <div class="instruction-item">
-                            <i class="fas fa-check-circle"></i>
-                            <p>Complete todas as palavras para avançar</p>
-                        </div>
-                        <div class="instruction-item">
-                            <i class="fas fa-star"></i>
-                            <p>Ganhe pontos por cada acerto</p>
-                        </div>
-                    </div>
-                    <button class="start-btn" id="startBtn">
-                        <i class="fas fa-play"></i>
-                        Começar Jogo
-                    </button>
-                </div>
-            </div>
-
-            <!-- ÁREA DO JOGO -->
-            <div class="game-area" id="gameArea" style="display: none;">
-                <!-- GRID DE PALAVRAS -->
-                <div class="words-grid" id="wordsGrid">
-                    <!-- As palavras serão inseridas dinamicamente aqui -->
-                </div>
-
-                <!-- ÁREA DE VOGAIS DISPONÍVEIS -->
-                <div class="vowels-area">
-                    <h3 class="vowels-title">Vogais Disponíveis</h3>
-                    <div class="vowels-container" id="vowelsContainer">
-                        <!-- As vogais serão inseridas dinamicamente aqui -->
-                    </div>
-                </div>
-
-                <!-- CONTROLES DO JOGO -->
-                <div class="game-controls">
-                    <button class="control-btn reset-btn" id="resetBtn">
-                        <i class="fas fa-redo"></i>
-                        Reiniciar Nível
-                    </button>
-                    
-                    <button class="control-btn hint-btn" id="hintBtn">
-                        <i class="fas fa-lightbulb"></i>
-                        Dica
-                    </button>
-                    
-                    <button class="control-btn check-btn" id="checkBtn">
-                        <i class="fas fa-check"></i>
-                        Verificar Respostas
-                    </button>
-                </div>
-            </div>
-
-            <!-- TELA DE RESULTADO -->
-            <div class="result-screen" id="resultScreen" style="display: none;">
-                <div class="result-content">
-                    <div class="result-icon" id="resultIcon">
-                        <i class="fas fa-trophy"></i>
-                    </div>
-                    <h2 class="result-title" id="resultTitle">Parabéns!</h2>
-                    <p class="result-message" id="resultMessage">Você completou o nível com sucesso!</p>
-                    
-                    <div class="result-stats">
-                        <div class="stat-item">
-                            <span class="stat-label">Pontuação</span>
-                            <span class="stat-value" id="finalScore">0</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">Tempo</span>
-                            <span class="stat-value" id="finalTime">00:00</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">Acertos</span>
-                            <span class="stat-value" id="finalAccuracy">100%</span>
-                        </div>
-                    </div>
-                    
-                    <div class="result-actions">
-                        <button class="action-btn next-btn" id="nextLevelBtn">
-                            <i class="fas fa-arrow-right"></i>
-                            Próximo Nível
-                        </button>
-                        <button class="action-btn replay-btn" id="replayBtn">
-                            <i class="fas fa-redo"></i>
-                            Jogar Novamente
-                        </button>
-                        <button class="action-btn menu-btn" id="menuBtn">
-                            <i class="fas fa-home"></i>
-                            Menu Principal
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </main>
-
-    <!-- MODAL DE DICA -->
-    <div class="modal" id="hintModal">
+    <!-- ===== MODAL DE FIM DE JOGO ===== -->
+    <div id="gameOverModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>💡 Dica</h3>
-                <button class="modal-close" id="closeHintModal">
-                    <i class="fas fa-times"></i>
-                </button>
+                <h2 id="modalTitle" class="modal-title">
+                    <i class="fas fa-trophy"></i>
+                    Parabéns!
+                </h2>
+                <button id="closeModalBtn" class="modal-close">&times;</button>
             </div>
+            
             <div class="modal-body">
-                <p id="hintText">Esta é uma dica para te ajudar!</p>
-                <div class="hint-image" id="hintImage">
-                    <!-- Imagem da dica será inserida aqui -->
+                <p id="modalMessage" class="modal-message">
+                    Você completou todos os níveis com sucesso!
+                </p>
+                
+                <div class="modal-stats">
+                    <div class="stat-item">
+                        <div class="stat-label">Pontuação Final:</div>
+                        <div class="stat-value" id="finalScore">0</div>
+                    </div>
+                    
+                    <div class="stat-item">
+                        <div class="stat-label">Nível Alcançado:</div>
+                        <div class="stat-value" id="finalLevel">1</div>
+                    </div>
+                    
+                    <div class="stat-item">
+                        <div class="stat-label">Palavras Completadas:</div>
+                        <div class="stat-value" id="finalWords">0</div>
+                    </div>
+                    
+                    <div id="finalTimeContainer" class="stat-item" style="display: none;">
+                        <div class="stat-label">Tempo Restante:</div>
+                        <div class="stat-value" id="finalTime">0s</div>
+                    </div>
                 </div>
+            </div>
+            
+            <div class="modal-footer">
+                <button id="playAgainBtn" class="game-btn primary">
+                    <i class="fas fa-redo"></i>
+                    Jogar Novamente
+                </button>
             </div>
         </div>
     </div>
 
-    <!-- MODAL DE CONFIGURAÇÕES -->
-    <div class="modal" id="settingsModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>⚙️ Configurações</h3>
-                <button class="modal-close" id="closeSettingsModal">
-                    <i class="fas fa-times"></i>
-                </button>
+    <!-- ===== RODAPÉ ===== -->
+    <footer class="game-footer">
+        <div class="footer-content">
+            <div class="footer-text">
+                <p>&copy; 2025 - Jogo Educativo</p>
+                <p>Projeto acadêmico - 1º período de Análise e Desenvolvimento de Sistemas - IFRO</p>
             </div>
-            <div class="modal-body">
-                <div class="setting-item">
-                    <label for="soundToggle">Som</label>
-                    <input type="checkbox" id="soundToggle" checked>
-                </div>
-                <div class="setting-item">
-                    <label for="difficultySelect">Dificuldade</label>
-                    <select id="difficultySelect">
-                        <option value="easy">Fácil</option>
-                        <option value="medium" selected>Médio</option>
-                        <option value="hard">Difícil</option>
-                    </select>
-                </div>
-                <div class="setting-item">
-                    <label for="timerToggle">Cronômetro</label>
-                    <input type="checkbox" id="timerToggle" checked>
-                </div>
+            
+            <!-- Logos das instituições -->
+            <div class="footer-logos">
+                <img src="img/ifroAri.jpeg" alt="IFRO Ariquemes" class="footer-logo" title="Instituto Federal de Rondônia - Campus Ariquemes">
+                <img src="img/ads_logo.png" alt="ADS Logo" class="footer-logo" title="Análise e Desenvolvimento de Sistemas">
+                <img src="img/ads2025.jpeg" alt="ADS 2025" class="footer-logo" title="Turma ADS 2025">
             </div>
         </div>
-    </div>
+    </footer>
 
-    <!-- BOTÃO DE CONFIGURAÇÕES -->
-    <button class="settings-btn" id="settingsBtn">
-        <i class="fas fa-cog"></i>
-    </button>
-
-    <!-- EFEITOS VISUAIS -->
-    <div class="particles-container" id="particlesContainer"></div>
+    <!-- ===== SCRIPTS ===== -->
+    <!-- Script do controlador de áudio -->
+    <script src="js/audio_controller.js"></script>
     
-    <!-- ÁREA DE FEEDBACK VISUAL -->
-    <div class="feedback-area" id="feedbackArea"></div>
-
-    <!-- SCRIPTS JAVASCRIPT -->
+    <!-- Script principal do jogo educativo -->
     <script src="js/educational_app.js"></script>
+    
+    <!-- Script de inicialização -->
+    <script>
+        // ===== INICIALIZAÇÃO DO PLAYER DE MÚSICA =====
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🎵 Inicializando player de música do jogo...');
+            
+            // Configurar player de música
+            if (typeof AudioController !== 'undefined') {
+                const gameAudioController = new AudioController();
+                window.gameAudioController = gameAudioController;
+                console.log('✅ Player de música do jogo inicializado!');
+            }
+            
+            // Configurar botão de toggle do player
+            const musicToggle = document.getElementById('musicPlayerToggle');
+            const musicControls = document.getElementById('musicPlayerControls');
+            
+            if (musicToggle && musicControls) {
+                musicToggle.addEventListener('click', function() {
+                    musicControls.classList.toggle('show');
+                });
+                
+                // Fechar controles ao clicar fora
+                document.addEventListener('click', function(e) {
+                    if (!musicToggle.contains(e.target) && !musicControls.contains(e.target)) {
+                        musicControls.classList.remove('show');
+                    }
+                });
+            }
+        });
+    </script>
 </body>
 </html>
+

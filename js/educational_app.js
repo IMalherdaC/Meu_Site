@@ -1,929 +1,1017 @@
-// ===== DADOS DO JOGO =====
-const GAME_DATA = {
-    levels: [
-        {
-            id: 1,
-            name: "Nível 1 - Animais",
-            words: [
-                {
-                    image: "https://via.placeholder.com/120x120/ff6b6b/ffffff?text=🦶",
-                    syllables: ["SA", "_A", "TO"],
-                    missing: [{ position: 1, vowel: "P" }],
-                    complete: "SAPATO",
-                    hint: "Você usa nos pés para caminhar"
-                },
-                {
-                    image: "https://via.placeholder.com/120x120/4ecdc4/ffffff?text=🦜",
-                    syllables: ["TU", "_A", "NO"],
-                    missing: [{ position: 1, vowel: "C" }],
-                    complete: "TUCANO",
-                    hint: "Ave colorida com bico grande"
-                },
-                {
-                    image: "https://via.placeholder.com/120x120/45b7d1/ffffff?text=⚽",
-                    syllables: ["BO", "_A"],
-                    missing: [{ position: 1, vowel: "L" }],
-                    complete: "BOLA",
-                    hint: "Objeto redondo usado em esportes"
-                },
-                {
-                    image: "https://via.placeholder.com/120x120/96ceb4/ffffff?text=🥄",
-                    syllables: ["ES", "_O", "LA"],
-                    missing: [{ position: 1, vowel: "C" }],
-                    complete: "ESCOLA",
-                    hint: "Local onde você aprende"
-                }
-            ]
-        },
-        {
-            id: 2,
-            name: "Nível 2 - Objetos",
-            words: [
-                {
-                    image: "https://via.placeholder.com/120x120/feca57/ffffff?text=🍰",
-                    syllables: ["BO", "_O"],
-                    missing: [{ position: 1, vowel: "L" }],
-                    complete: "BOLO",
-                    hint: "Doce que comemos em aniversários"
-                },
-                {
-                    image: "https://via.placeholder.com/120x120/ff6b6b/ffffff?text=🐴",
-                    syllables: ["CA", "_A", "LO"],
-                    missing: [{ position: 1, vowel: "V" }],
-                    complete: "CAVALO",
-                    hint: "Animal que galopa"
-                },
-                {
-                    image: "https://via.placeholder.com/120x120/4ecdc4/ffffff?text=🍌",
-                    syllables: ["BA", "_A", "NA"],
-                    missing: [{ position: 1, vowel: "N" }],
-                    complete: "BANANA",
-                    hint: "Fruta amarela e doce"
-                },
-                {
-                    image: "https://via.placeholder.com/120x120/45b7d1/ffffff?text=🪑",
-                    syllables: ["ES", "_A", "DA"],
-                    missing: [{ position: 1, vowel: "C" }],
-                    complete: "ESCADA",
-                    hint: "Usamos para subir"
-                }
-            ]
-        }
-    ],
-    
-    vowels: ["A", "E", "I", "O", "U"],
-    consonants: ["B", "C", "D", "F", "G", "H", "J", "K", "L", "M", "N", "P", "Q", "R", "S", "T", "V", "W", "X", "Y", "Z"]
-};
+// ===== JOGO EDUCATIVO MELHORADO =====
+// Arquivo criado durante o aprendizado de JavaScript - 1º período ADS
+// Sistema de jogo de formação de palavras - implementação teste (06/07/25)
+
+console.log('🎮 Sistema do jogo educativo carregado');
 
 // ===== CLASSE PRINCIPAL DO JOGO =====
 class EducationalGame {
     constructor() {
-        this.currentLevel = 1;
-        this.score = 0;
-        this.timer = 0;
-        this.timerInterval = null;
-        this.isGameActive = false;
-        this.completedWords = 0;
-        this.totalWords = 0;
-        this.mistakes = 0;
-        this.hintsUsed = 0;
-        this.soundEnabled = true;
-        this.difficulty = 'medium';
+        // Configurações do jogo
+        this.config = {
+            maxLevel: 5,
+            pointsPerSyllable: 10,
+            pointsPerWord: 50,
+            timePerLevel: 60, // segundos
+            timerStartLevel: 3, // cronômetro inicia no nível 3
+            shuffleStartLevel: 2, // embaralhamento inicia no nível 2
+            hintsPerLevel: 2
+        };
         
-        // Elementos DOM
-        this.elements = {};
+        // Estado do jogo
+        this.gameState = {
+            isPlaying: false,
+            isPaused: false,
+            currentLevel: 1,
+            score: 0,
+            wordsCompleted: 0,
+            hintsUsed: 0,
+            timeRemaining: 0,
+            timerInterval: null
+        };
         
+        // Dados das palavras por nível - corrigido com sílaba "PON"
+        this.gameData = {
+            1: [
+                { word: 'CASA', syllables: ['CA', 'SA'], image: '🏠' },
+                { word: 'GATO', syllables: ['GA', 'TO'], image: '🐱' },
+                { word: 'BOLA', syllables: ['BO', 'LA'], image: '⚽' }
+            ],
+            2: [
+                { word: 'ESCOLA', syllables: ['ES', 'CO', 'LA'], image: '🏫' },
+                { word: 'AMIGO', syllables: ['A', 'MI', 'GO'], image: '👫' },
+                { word: 'LIVRO', syllables: ['LI', 'VRO'], image: '📚' },
+                { word: 'FLOR', syllables: ['FLOR'], image: '🌸' }
+            ],
+            3: [
+                { word: 'COMPUTADOR', syllables: ['COM', 'PU', 'TA', 'DOR'], image: '💻' },
+                { word: 'TELEFONE', syllables: ['TE', 'LE', 'FO', 'NE'], image: '📱' },
+                { word: 'BICICLETA', syllables: ['BI', 'CI', 'CLE', 'TA'], image: '🚲' },
+                { word: 'APONTADOR', syllables: ['A', 'PON', 'TA', 'DOR'], image: '✏️' }
+            ],
+            4: [
+                { word: 'PROGRAMAÇÃO', syllables: ['PRO', 'GRA', 'MA', 'ÇÃO'], image: '💻' },
+                { word: 'DESENVOLVIMENTO', syllables: ['DE', 'SEN', 'VOL', 'VI', 'MEN', 'TO'], image: '🚀' },
+                { word: 'TECNOLOGIA', syllables: ['TEC', 'NO', 'LO', 'GI', 'A'], image: '⚙️' },
+                { word: 'ALGORITMO', syllables: ['AL', 'GO', 'RIT', 'MO'], image: '🧮' }
+            ],
+            5: [
+                { word: 'INTELIGÊNCIA', syllables: ['IN', 'TE', 'LI', 'GÊN', 'CI', 'A'], image: '🧠' },
+                { word: 'CRIATIVIDADE', syllables: ['CRI', 'A', 'TI', 'VI', 'DA', 'DE'], image: '🎨' },
+                { word: 'RESPONSABILIDADE', syllables: ['RES', 'PON', 'SA', 'BI', 'LI', 'DA', 'DE'], image: '🎯' },
+                { word: 'CONHECIMENTO', syllables: ['CO', 'NHE', 'CI', 'MEN', 'TO'], image: '📖' }
+            ]
+        };
+        
+        // Elementos do DOM
+        this.elements = {
+            // Informações do jogo
+            currentLevel: document.getElementById('currentLevel'),
+            currentScore: document.getElementById('currentScore'),
+            wordsCompleted: document.getElementById('wordsCompleted'),
+            gameTimer: document.getElementById('gameTimer'),
+            timerContainer: document.getElementById('timerContainer'),
+            
+            // Containers principais
+            wordsContainer: document.getElementById('wordsContainer'),
+            syllablesContainer: document.getElementById('syllablesContainer'),
+            
+            // Controles
+            startGameBtn: document.getElementById('startGameBtn'),
+            resetGameBtn: document.getElementById('resetGameBtn'),
+            nextLevelBtn: document.getElementById('nextLevelBtn'),
+            hintBtn: document.getElementById('hintBtn'),
+            
+            // Feedback
+            gameMessage: document.getElementById('gameMessage'),
+            levelProgress: document.getElementById('levelProgress'),
+            progressText: document.getElementById('progressText'),
+            
+            // Modal
+            gameOverModal: document.getElementById('gameOverModal'),
+            modalTitle: document.getElementById('modalTitle'),
+            modalMessage: document.getElementById('modalMessage'),
+            finalScore: document.getElementById('finalScore'),
+            finalLevel: document.getElementById('finalLevel'),
+            finalWords: document.getElementById('finalWords'),
+            finalTime: document.getElementById('finalTime'),
+            finalTimeContainer: document.getElementById('finalTimeContainer'),
+            playAgainBtn: document.getElementById('playAgainBtn'),
+            closeModalBtn: document.getElementById('closeModalBtn')
+        };
+        
+        // Estado das palavras e sílabas
+        this.currentWords = [];
+        this.availableSyllables = [];
+        this.usedSyllables = new Set();
+        this.draggedElement = null;
+        
+        // Inicializar jogo
         this.init();
     }
     
+    // ===== INICIALIZAÇÃO =====
     init() {
-        this.cacheElements();
-        this.setupEventListeners();
-        this.setupDragAndDrop();
-        this.updateUI();
+        console.log('🎮 Inicializando jogo educativo...');
         
-        console.log('🎮 Jogo educativo inicializado!');
+        try {
+            // Configurar eventos
+            this.setupEventListeners();
+            
+            // Atualizar interface inicial
+            this.updateUI();
+            
+            // Esconder o botão de próximo nível no início
+            if (this.elements.nextLevelBtn) {
+                this.elements.nextLevelBtn.style.display = 'none';
+            }
+
+            // Mostrar mensagem inicial
+            this.showMessage('Clique em "Iniciar Jogo" para começar sua jornada de aprendizado!');
+            
+            console.log('✅ Jogo educativo inicializado com sucesso!');
+            
+        } catch (error) {
+            console.error('❌ Erro ao inicializar jogo:', error);
+            this.showNotification('❌ Erro ao carregar jogo', 'error');
+        }
     }
     
-    cacheElements() {
-        this.elements = {
-            // Telas
-            instructions: document.getElementById('instructions'),
-            gameArea: document.getElementById('gameArea'),
-            resultScreen: document.getElementById('resultScreen'),
-            
-            // Botões principais
-            startBtn: document.getElementById('startBtn'),
-            resetBtn: document.getElementById('resetBtn'),
-            hintBtn: document.getElementById('hintBtn'),
-            checkBtn: document.getElementById('checkBtn'),
-            
-            // Botões de resultado
-            nextLevelBtn: document.getElementById('nextLevelBtn'),
-            replayBtn: document.getElementById('replayBtn'),
-            menuBtn: document.getElementById('menuBtn'),
-            
-            // Áreas de jogo
-            wordsGrid: document.getElementById('wordsGrid'),
-            vowelsContainer: document.getElementById('vowelsContainer'),
-            
-            // Informações
-            scoreValue: document.getElementById('scoreValue'),
-            levelValue: document.getElementById('levelValue'),
-            progressFill: document.getElementById('progressFill'),
-            timerValue: document.getElementById('timerValue'),
-            
-            // Resultado
-            resultIcon: document.getElementById('resultIcon'),
-            resultTitle: document.getElementById('resultTitle'),
-            resultMessage: document.getElementById('resultMessage'),
-            finalScore: document.getElementById('finalScore'),
-            finalTime: document.getElementById('finalTime'),
-            finalAccuracy: document.getElementById('finalAccuracy'),
-            
-            // Modais
-            hintModal: document.getElementById('hintModal'),
-            settingsModal: document.getElementById('settingsModal'),
-            hintText: document.getElementById('hintText'),
-            hintImage: document.getElementById('hintImage'),
-            
-            // Configurações
-            settingsBtn: document.getElementById('settingsBtn'),
-            soundToggle: document.getElementById('soundToggle'),
-            difficultySelect: document.getElementById('difficultySelect'),
-            timerToggle: document.getElementById('timerToggle'),
-            
-            // Feedback
-            feedbackArea: document.getElementById('feedbackArea'),
-            particlesContainer: document.getElementById('particlesContainer')
-        };
-    }
-    
+    // ===== CONFIGURAÇÃO DE EVENTOS =====
     setupEventListeners() {
-        // Botões principais
-        this.elements.startBtn?.addEventListener('click', () => this.startGame());
-        this.elements.resetBtn?.addEventListener('click', () => this.resetLevel());
-        this.elements.hintBtn?.addEventListener('click', () => this.showHint());
-        this.elements.checkBtn?.addEventListener('click', () => this.checkAnswers());
-        
-        // Botões de resultado
+        // Botões de controle
+        this.elements.startGameBtn?.addEventListener('click', () => this.startGame());
+        this.elements.resetGameBtn?.addEventListener('click', () => this.resetGame());
         this.elements.nextLevelBtn?.addEventListener('click', () => this.nextLevel());
-        this.elements.replayBtn?.addEventListener('click', () => this.replayLevel());
-        this.elements.menuBtn?.addEventListener('click', () => this.goToMenu());
+        this.elements.hintBtn?.addEventListener('click', () => this.showHint());
         
-        // Configurações
-        this.elements.settingsBtn?.addEventListener('click', () => this.openSettings());
-        this.elements.soundToggle?.addEventListener('change', (e) => {
-            this.soundEnabled = e.target.checked;
-        });
-        this.elements.difficultySelect?.addEventListener('change', (e) => {
-            this.difficulty = e.target.value;
-        });
-        
-        // Fechar modais
-        document.getElementById('closeHintModal')?.addEventListener('click', () => this.closeModal('hintModal'));
-        document.getElementById('closeSettingsModal')?.addEventListener('click', () => this.closeModal('settingsModal'));
+        // Modal
+        this.elements.playAgainBtn?.addEventListener('click', () => this.playAgain());
+        this.elements.closeModalBtn?.addEventListener('click', () => this.closeModal());
         
         // Fechar modal clicando fora
-        document.addEventListener('click', (e) => {
-            if (e.target.classList.contains('modal')) {
-                this.closeModal(e.target.id);
+        this.elements.gameOverModal?.addEventListener('click', (e) => {
+            if (e.target === this.elements.gameOverModal) {
+                this.closeModal();
             }
         });
         
-        // Teclas de atalho
-        document.addEventListener('keydown', (e) => {
-            if (this.isGameActive) {
-                switch(e.key) {
-                    case 'h':
-                    case 'H':
-                        this.showHint();
-                        break;
-                    case 'r':
-                    case 'R':
-                        this.resetLevel();
-                        break;
-                    case 'Enter':
-                        this.checkAnswers();
-                        break;
-                    case 'Escape':
-                        this.closeAllModals();
-                        break;
-                }
-            }
-        });
+        // Atalhos de teclado
+        document.addEventListener('keydown', (e) => this.handleKeyboard(e));
     }
     
-    setupDragAndDrop() {
-        // Será configurado dinamicamente quando as vogais forem criadas
-    }
-    
+    // ===== LÓGICA DO JOGO =====
     startGame() {
-        this.isGameActive = true;
-        this.score = 0;
-        this.timer = 0;
-        this.completedWords = 0;
-        this.mistakes = 0;
-        this.hintsUsed = 0;
+        console.log('🎮 Iniciando jogo...');
         
-        this.showScreen('gameArea');
-        this.loadLevel(this.currentLevel);
-        this.startTimer();
+        // Resetar estado
+        this.gameState = {
+            isPlaying: true,
+            isPaused: false,
+            currentLevel: 1,
+            score: 0,
+            wordsCompleted: 0,
+            hintsUsed: 0,
+            timeRemaining: this.config.timePerLevel,
+            timerInterval: null
+        };
+        
+        // Limpar sílabas usadas
+        this.usedSyllables.clear();
+        
+        // Configurar nível 1
+        this.setupLevel(1);
+        
+        // Atualizar interface
         this.updateUI();
+        this.updateButtons();
         
-        this.showFeedback('Jogo iniciado! Boa sorte! 🎮', 'success');
+        // Mostrar mensagem
+        this.showMessage('🎮 Jogo iniciado! Arraste as sílabas para formar as palavras.');
+        
+        // Tocar som de início (se disponível)
+        this.playSuccessSound();
+        
+        console.log('✅ Jogo iniciado com sucesso!');
     }
     
-    loadLevel(levelNumber) {
-        const levelData = GAME_DATA.levels.find(level => level.id === levelNumber);
+    // Configurar nível
+    setupLevel(level) {
+        console.log(`🎯 Configurando nível ${level}...`);
+        
+        // Obter dados do nível
+        const levelData = this.gameData[level];
         if (!levelData) {
-            this.showFeedback('Nível não encontrado!', 'error');
+            console.error(`❌ Dados para o nível ${level} não encontrados.`);
+            this.completeGame(); // Se não há dados, assume que o jogo terminou
             return;
         }
+        this.currentWords = [...levelData];
         
-        this.totalWords = levelData.words.length;
-        this.completedWords = 0;
+        // Resetar palavras completadas para o novo nível
+        this.gameState.wordsCompleted = 0;
+
+        // Configurar cronômetro se necessário
+        if (level >= this.config.timerStartLevel) {
+            this.gameState.timeRemaining = this.config.timePerLevel + (level * 10); // Mais tempo em níveis avançados
+            this.startTimer();
+            this.elements.timerContainer.style.display = 'flex';
+        } else {
+            this.elements.timerContainer.style.display = 'none';
+            this.stopTimer(); // Garante que o timer esteja parado em níveis sem timer
+        }
         
-        this.createWordsGrid(levelData.words);
-        this.createVowelsContainer(levelData.words);
+        // Gerar interface do nível
+        this.generateWordsInterface();
+        this.generateSyllablesInterface(level);
+        
+        // Atualizar progresso
         this.updateProgress();
         
-        console.log(`📚 Nível ${levelNumber} carregado:`, levelData.name);
+        // Mostrar informações do nível
+        this.showMessage(`🎯 Nível ${level} - Complete ${this.currentWords.length} palavras!`);
+        
+        // Garantir que o botão de próximo nível esteja desabilitado no início do nível
+        this.elements.nextLevelBtn.disabled = true;
+        this.elements.nextLevelBtn.classList.add('disabled');
+        this.elements.nextLevelBtn.style.display = 'none'; // Esconder no início do nível
+        
+        console.log(`✅ Nível ${level} configurado com ${this.currentWords.length} palavras`);
     }
     
-    createWordsGrid(words) {
-        this.elements.wordsGrid.innerHTML = '';
+    // Gerar interface das palavras
+    generateWordsInterface() {
+        this.elements.wordsContainer.innerHTML = '';
         
-        words.forEach((word, index) => {
-            const wordCard = document.createElement('div');
-            wordCard.className = 'word-card';
-            wordCard.dataset.wordIndex = index;
+        this.currentWords.forEach((wordData, wordIndex) => {
+            const wordElement = document.createElement('div');
+            wordElement.className = 'word-item';
+            wordElement.dataset.wordIndex = wordIndex;
             
-            wordCard.innerHTML = `
-                <div class="word-image">
-                    <img src="${word.image}" alt="${word.complete}" loading="lazy">
+            wordElement.innerHTML = `
+                <div class="word-display">
+                    ${wordData.image} ${wordData.word}
                 </div>
-                <div class="word-syllables">
-                    ${this.createSyllablesHTML(word.syllables, word.missing, index)}
+                <div class="syllable-slots">
+                    ${wordData.syllables.map((syllable, slotIndex) => `
+                        <div class="syllable-slot" 
+                             data-word-index="${wordIndex}" 
+                             data-slot-index="${slotIndex}"
+                             data-expected-syllable="${syllable}">
+                        </div>
+                    `).join('')}
                 </div>
             `;
             
-            this.elements.wordsGrid.appendChild(wordCard);
-        });
-    }
-    
-    createSyllablesHTML(syllables, missing, wordIndex) {
-        return syllables.map((syllable, syllableIndex) => {
-            if (syllable.includes('_')) {
-                // Criar zona de drop para a letra faltante
-                const missingInfo = missing.find(m => m.position === syllableIndex);
-                return `
-                    <div class="syllable">
-                        ${syllable.split('').map((char, charIndex) => {
-                            if (char === '_') {
-                                return `<div class="drop-zone" 
-                                           data-word="${wordIndex}" 
-                                           data-syllable="${syllableIndex}" 
-                                           data-char="${charIndex}"
-                                           data-expected="${missingInfo?.vowel || ''}"></div>`;
-                            }
-                            return char;
-                        }).join('')}
-                    </div>
-                `;
-            } else {
-                return `<div class="syllable complete">${syllable}</div>`;
-            }
-        }).join('');
-    }
-    
-    createVowelsContainer(words) {
-        this.elements.vowelsContainer.innerHTML = '';
-        
-        // Coletar todas as letras necessárias
-        const neededLetters = [];
-        words.forEach(word => {
-            word.missing.forEach(missing => {
-                neededLetters.push(missing.vowel);
-            });
+            this.elements.wordsContainer.appendChild(wordElement);
         });
         
-        // Adicionar algumas letras extras para confundir
-        const extraLetters = this.getRandomLetters(neededLetters.length);
-        const allLetters = [...neededLetters, ...extraLetters];
-        
-        // Embaralhar as letras
-        this.shuffleArray(allLetters);
-        
-        // Criar elementos de letras
-        allLetters.forEach((letter, index) => {
-            const vowelItem = document.createElement('div');
-            vowelItem.className = 'vowel-item';
-            vowelItem.textContent = letter;
-            vowelItem.draggable = true;
-            vowelItem.dataset.letter = letter;
-            vowelItem.dataset.vowelId = `vowel-${index}`;
-            
-            // Configurar drag and drop
-            this.setupVowelDragAndDrop(vowelItem);
-            
-            this.elements.vowelsContainer.appendChild(vowelItem);
-        });
-    }
-    
-    setupVowelDragAndDrop(vowelItem) {
-        vowelItem.addEventListener('dragstart', (e) => {
-            e.dataTransfer.setData('text/plain', vowelItem.dataset.letter);
-            e.dataTransfer.setData('vowel-id', vowelItem.dataset.vowelId);
-            vowelItem.classList.add('dragging');
-        });
-        
-        vowelItem.addEventListener('dragend', () => {
-            vowelItem.classList.remove('dragging');
-        });
-        
-        // Configurar drop zones
+        // Configurar eventos de drop nos slots
         this.setupDropZones();
     }
     
+    // Configurar zonas de drop
     setupDropZones() {
-        const dropZones = document.querySelectorAll('.drop-zone');
+        const slots = document.querySelectorAll('.syllable-slot');
         
-        dropZones.forEach(zone => {
-            zone.addEventListener('dragover', (e) => {
+        slots.forEach(slot => {
+            slot.addEventListener('dragover', (e) => {
                 e.preventDefault();
-                zone.classList.add('drag-over');
+                if (!slot.classList.contains('filled')) {
+                    slot.classList.add('drag-over');
+                }
             });
             
-            zone.addEventListener('dragleave', () => {
-                zone.classList.remove('drag-over');
+            slot.addEventListener('dragleave', (e) => {
+                slot.classList.remove('drag-over');
             });
             
-            zone.addEventListener('drop', (e) => {
+            slot.addEventListener('drop', (e) => {
                 e.preventDefault();
-                zone.classList.remove('drag-over');
+                slot.classList.remove('drag-over');
                 
-                const letter = e.dataTransfer.getData('text/plain');
-                const vowelId = e.dataTransfer.getData('vowel-id');
-                const expected = zone.dataset.expected;
-                
-                // Verificar se a zona já está preenchida
-                if (zone.classList.contains('filled')) {
-                    this.showFeedback('Esta posição já está preenchida!', 'error');
+                if (slot.classList.contains('filled')) {
+                    this.showNotification('Este espaço já está preenchido!', 'warning');
                     return;
                 }
                 
-                // Preencher a zona
-                zone.textContent = letter;
-                zone.classList.add('filled');
-                zone.dataset.placedLetter = letter;
+                const syllableText = e.dataTransfer.getData('text/plain');
+                const syllableId = e.dataTransfer.getData('syllable-id');
                 
-                // Marcar a vogal como usada
-                const vowelElement = document.querySelector(`[data-vowel-id="${vowelId}"]`);
-                if (vowelElement) {
-                    vowelElement.classList.add('used');
+                this.placeSyllableInSlot(slot, syllableText, syllableId);
+            });
+        });
+    }
+    
+    // Gerar interface das sílabas
+    generateSyllablesInterface(level) {
+        // Coletar todas as sílabas do nível
+        let allSyllables = [];
+        this.currentWords.forEach(wordData => {
+            allSyllables.push(...wordData.syllables);
+        });
+        
+        // Adicionar sílabas distratoras para aumentar dificuldade
+        const distractorSyllables = this.getDistractorSyllables(level);
+        allSyllables.push(...distractorSyllables);
+        
+        // Embaralhar sílabas se for nível 2 ou superior
+        if (level >= this.config.shuffleStartLevel) {
+            allSyllables = this.shuffleArray(allSyllables);
+        }
+        
+        // Limpar container
+        this.elements.syllablesContainer.innerHTML = '';
+        
+        // Criar elementos das sílabas
+        allSyllables.forEach((syllable, index) => {
+            const syllableElement = document.createElement('div');
+            syllableElement.className = 'syllable-item';
+            syllableElement.draggable = true;
+            syllableElement.textContent = syllable;
+            syllableElement.dataset.syllableId = `syllable-${level}-${index}`;
+            
+            // Configurar eventos de drag
+            syllableElement.addEventListener('dragstart', (e) => {
+                if (syllableElement.classList.contains('used')) {
+                    e.preventDefault();
+                    this.showNotification('Esta sílaba já foi usada!', 'warning');
+                    return;
                 }
                 
-                // Verificar se está correto
-                if (letter === expected) {
-                    zone.classList.add('correct');
-                    this.playSound('correct');
-                    this.createParticleEffect(zone, 'success');
-                } else {
-                    zone.classList.add('incorrect');
-                    this.mistakes++;
-                    this.playSound('incorrect');
-                    this.createParticleEffect(zone, 'error');
-                }
-                
-                // Verificar se a palavra está completa
-                this.checkWordCompletion(zone.dataset.word);
+                this.draggedElement = syllableElement;
+                syllableElement.classList.add('dragging');
+                e.dataTransfer.setData('text/plain', syllable);
+                e.dataTransfer.setData('syllable-id', syllableElement.dataset.syllableId);
             });
             
-            // Permitir remover letras clicando duas vezes
-            zone.addEventListener('dblclick', () => {
-                if (zone.classList.contains('filled')) {
-                    this.removeLetter(zone);
-                }
+            syllableElement.addEventListener('dragend', (e) => {
+                syllableElement.classList.remove('dragging');
+                this.draggedElement = null;
             });
+            
+            this.elements.syllablesContainer.appendChild(syllableElement);
         });
+        
+        console.log(`🎯 Geradas ${allSyllables.length} sílabas para o nível ${level}`);
     }
     
-    removeLetter(zone) {
-        const letter = zone.dataset.placedLetter;
+    // Obter sílabas distratoras
+    getDistractorSyllables(level) {
+        const distractors = {
+            1: ['MA', 'TA', 'PA', 'NA'],
+            2: ['RA', 'SO', 'TI', 'NO', 'DA'],
+            3: ['MEN', 'TOR', 'CAR', 'VEL', 'SER'],
+            4: ['ÇÃO', 'MENTE', 'DADE', 'ISMO'],
+            5: ['NCIA', 'ÁVEL', 'ENTE', 'ANTE']
+        };
         
-        // Limpar a zona
-        zone.textContent = '';
-        zone.classList.remove('filled', 'correct', 'incorrect');
-        delete zone.dataset.placedLetter;
+        const levelDistractors = distractors[level] || []; // Retorna array vazio se o nível não tiver distratores
+        const numDistractors = Math.min(level + 1, levelDistractors.length);
         
-        // Reativar a vogal correspondente
-        const vowelElements = document.querySelectorAll('.vowel-item');
-        vowelElements.forEach(vowel => {
-            if (vowel.dataset.letter === letter && vowel.classList.contains('used')) {
-                vowel.classList.remove('used');
-                return; // Remove apenas a primeira ocorrência
-            }
-        });
-        
-        this.showFeedback('Letra removida!', 'info');
+        return this.shuffleArray(levelDistractors).slice(0, numDistractors);
     }
     
-    checkWordCompletion(wordIndex) {
-        const wordCard = document.querySelector(`[data-word-index="${wordIndex}"]`);
-        const dropZones = wordCard.querySelectorAll('.drop-zone');
-        
-        let isComplete = true;
-        let isCorrect = true;
-        
-        dropZones.forEach(zone => {
-            if (!zone.classList.contains('filled')) {
-                isComplete = false;
-            }
-            if (!zone.classList.contains('correct')) {
-                isCorrect = false;
-            }
-        });
-        
-        if (isComplete) {
-            if (isCorrect) {
-                this.completeWord(wordCard, wordIndex);
-            } else {
-                this.showFeedback('Palavra incorreta! Tente novamente.', 'error');
-            }
+    // Embaralhar array
+    shuffleArray(array) {
+        const shuffled = [...array];
+        for (let i = shuffled.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
         }
+        return shuffled;
     }
     
-    completeWord(wordCard, wordIndex) {
-        wordCard.classList.add('completed');
-        this.completedWords++;
-        this.score += this.calculateWordScore();
+    // Colocar sílaba no slot
+    placeSyllableInSlot(slot, syllableText, syllableId) {
+        // Verificar se a sílaba está correta
+        const expectedSyllable = slot.dataset.expectedSyllable;
         
-        this.updateUI();
-        this.updateProgress();
-        
-        this.showFeedback('Palavra completa! Parabéns! 🎉', 'success');
-        this.createCelebrationEffect(wordCard);
-        this.playSound('word-complete');
-        
-        // Verificar se o nível está completo
-        if (this.completedWords >= this.totalWords) {
-            setTimeout(() => this.completeLevel(), 1000);
-        }
-    }
-    
-    calculateWordScore() {
-        let baseScore = 100;
-        
-        // Bônus por dificuldade
-        switch(this.difficulty) {
-            case 'easy': baseScore *= 0.8; break;
-            case 'hard': baseScore *= 1.5; break;
-        }
-        
-        // Penalidade por erros
-        baseScore -= (this.mistakes * 10);
-        
-        // Bônus por velocidade (menos tempo = mais pontos)
-        if (this.timer < 30) baseScore += 50;
-        else if (this.timer < 60) baseScore += 25;
-        
-        return Math.max(baseScore, 10); // Mínimo 10 pontos
-    }
-    
-    checkAnswers() {
-        const dropZones = document.querySelectorAll('.drop-zone');
-        let allCorrect = true;
-        let allFilled = true;
-        
-        dropZones.forEach(zone => {
-            if (!zone.classList.contains('filled')) {
-                allFilled = false;
-                zone.classList.add('error');
-                setTimeout(() => zone.classList.remove('error'), 1000);
-            } else if (!zone.classList.contains('correct')) {
-                allCorrect = false;
-                zone.classList.add('error');
-                setTimeout(() => zone.classList.remove('error'), 1000);
-            }
-        });
-        
-        if (!allFilled) {
-            this.showFeedback('Complete todas as palavras primeiro!', 'warning');
-        } else if (!allCorrect) {
-            this.showFeedback('Algumas respostas estão incorretas!', 'error');
-            this.mistakes++;
-        } else {
-            this.completeLevel();
-        }
-    }
-    
-    completeLevel() {
-        this.isGameActive = false;
-        this.stopTimer();
-        
-        const accuracy = Math.round(((this.totalWords * 4 - this.mistakes) / (this.totalWords * 4)) * 100);
-        
-        this.showResultScreen({
-            success: true,
-            score: this.score,
-            time: this.formatTime(this.timer),
-            accuracy: `${accuracy}%`,
-            title: 'Parabéns!',
-            message: 'Você completou o nível com sucesso!'
-        });
-        
-        this.playSound('level-complete');
-        this.createFireworksEffect();
-    }
-    
-    showResultScreen(data) {
-        this.elements.resultIcon.className = `result-icon ${data.success ? 'success' : 'error'}`;
-        this.elements.resultIcon.innerHTML = `<i class="fas fa-${data.success ? 'trophy' : 'times-circle'}"></i>`;
-        
-        this.elements.resultTitle.className = `result-title ${data.success ? 'success' : 'error'}`;
-        this.elements.resultTitle.textContent = data.title;
-        
-        this.elements.resultMessage.textContent = data.message;
-        
-        this.elements.finalScore.textContent = data.score;
-        this.elements.finalTime.textContent = data.time;
-        this.elements.finalAccuracy.textContent = data.accuracy;
-        
-        // Mostrar/ocultar botão de próximo nível
-        if (data.success && this.currentLevel < GAME_DATA.levels.length) {
-            this.elements.nextLevelBtn.style.display = 'inline-flex';
-        } else {
-            this.elements.nextLevelBtn.style.display = 'none';
-        }
-        
-        this.showScreen('resultScreen');
-    }
-    
-    nextLevel() {
-        if (this.currentLevel < GAME_DATA.levels.length) {
-            this.currentLevel++;
-            this.startGame();
-        } else {
-            this.showFeedback('Parabéns! Você completou todos os níveis!', 'success');
-            this.goToMenu();
-        }
-    }
-    
-    replayLevel() {
-        this.startGame();
-    }
-    
-    resetLevel() {
-        // Limpar todas as zonas de drop
-        const dropZones = document.querySelectorAll('.drop-zone');
-        dropZones.forEach(zone => {
-            if (zone.classList.contains('filled')) {
-                this.removeLetter(zone);
-            }
-        });
-        
-        // Reativar todas as vogais
-        const vowelItems = document.querySelectorAll('.vowel-item');
-        vowelItems.forEach(vowel => {
-            vowel.classList.remove('used');
-        });
-        
-        this.completedWords = 0;
-        this.mistakes = 0;
-        this.updateUI();
-        this.updateProgress();
-        
-        this.showFeedback('Nível reiniciado!', 'info');
-    }
-    
-    goToMenu() {
-        this.isGameActive = false;
-        this.stopTimer();
-        this.currentLevel = 1;
-        this.score = 0;
-        this.showScreen('instructions');
-        this.updateUI();
-    }
-    
-    showHint() {
-        const currentLevelData = GAME_DATA.levels.find(level => level.id === this.currentLevel);
-        if (!currentLevelData) return;
-        
-        // Encontrar a primeira palavra incompleta
-        const incompleteWordIndex = this.findIncompleteWord();
-        if (incompleteWordIndex === -1) {
-            this.showFeedback('Todas as palavras estão completas!', 'info');
+        if (syllableText !== expectedSyllable) {
+            this.showNotification(`❌ Sílaba incorreta!`, 'error'); // Remover o esperado para não dar a resposta
             return;
         }
         
-        const word = currentLevelData.words[incompleteWordIndex];
-        this.elements.hintText.textContent = word.hint;
-        this.elements.hintImage.innerHTML = `<img src="${word.image}" alt="Dica">`;
+        // Criar elemento da sílaba no slot
+        const syllableElement = document.createElement('span');
+        syllableElement.className = 'syllable-in-slot';
+        syllableElement.textContent = syllableText;
+        syllableElement.dataset.syllableId = syllableId;
         
-        this.openModal('hintModal');
-        this.hintsUsed++;
-        this.score = Math.max(0, this.score - 25); // Penalidade por usar dica
+        // Adicionar ao slot
+        slot.appendChild(syllableElement);
+        slot.classList.add('filled');
+        
+        // Marcar sílaba como usada
+        this.markSyllableAsUsed(syllableId);
+        
+        // Adicionar pontos
+        this.addScore(this.config.pointsPerSyllable);
+        
+        // Verificar se a palavra foi completada
+        this.checkWordCompletion(slot);
+        
+        // Efeito visual
+        slot.classList.add('animate-bounce');
+        setTimeout(() => slot.classList.remove('animate-bounce'), 1000);
+        
+        console.log(`🎯 Sílaba "${syllableText}" colocada no slot`);
+        this.showNotification(`✅ Sílaba "${syllableText}" adicionada!`, 'success', 2000);
+    }
+    
+    // Marcar sílaba como usada
+    markSyllableAsUsed(syllableId) {
+        const syllableElement = document.querySelector(`[data-syllable-id="${syllableId}"]`);
+        if (syllableElement && syllableElement.classList.contains('syllable-item')) {
+            syllableElement.classList.add('used');
+            syllableElement.draggable = false;
+            this.usedSyllables.add(syllableId);
+        }
+    }
+    
+    // Verificar conclusão da palavra
+    checkWordCompletion(slot) {
+        const wordIndex = parseInt(slot.dataset.wordIndex);
+        const wordElement = slot.closest('.word-item');
+        const slots = wordElement.querySelectorAll('.syllable-slot');
+        
+        // Verificar se todos os slots estão preenchidos
+        const allFilled = Array.from(slots).every(s => s.classList.contains('filled'));
+        
+        if (allFilled) {
+            this.completeWord(wordElement, wordIndex);
+        }
+    }
+    
+    // Completar palavra
+    completeWord(wordElement, wordIndex) {
+        const wordData = this.currentWords[wordIndex];
+        
+        // Marcar como completada
+        wordElement.classList.add('completed');
+        
+        // Adicionar pontos
+        this.addScore(this.config.pointsPerWord);
+        
+        // Incrementar contador
+        this.gameState.wordsCompleted++;
+        
+        // Efeitos visuais
+        wordElement.classList.add('animate-bounce');
+        setTimeout(() => wordElement.classList.remove('animate-bounce'), 1000);
+        
+        // Tocar som de sucesso
+        this.playSuccessSound();
+        
+        // Mostrar notificação
+        this.showNotification(`🎉 Palavra "${wordData.word}" completada! +${this.config.pointsPerWord} pontos`, 'success', 3000);
+        
+        // Verificar se o nível foi completado
+        this.checkLevelCompletion();
+        
+        console.log(`✅ Palavra "${wordData.word}" completada`);
+    }
+    
+    // Verificar conclusão do nível
+    checkLevelCompletion() {
+        const completedWords = document.querySelectorAll('.word-item.completed').length;
+        const totalWords = this.currentWords.length;
+
+        // Atualizar progresso
+        this.updateProgress();
+
+        if (completedWords === totalWords) {
+            // Habilita botão de próximo nível
+            if (this.elements.nextLevelBtn) {
+                this.elements.nextLevelBtn.disabled = false;
+                this.elements.nextLevelBtn.classList.remove('disabled');
+                this.elements.nextLevelBtn.style.display = 'inline-flex'; // Mostrar o botão
+            }
+            this.completeLevel();
+        }
+    }
+
+    
+    // Completar nível
+    completeLevel() {
+        console.log(`🎉 Nível ${this.gameState.currentLevel} completado!`);
+        
+        // Parar cronômetro
+        this.stopTimer();
+        
+        // Bonus por tempo restante
+        if (this.gameState.currentLevel >= this.config.timerStartLevel && this.gameState.timeRemaining > 0) {
+            const timeBonus = this.gameState.timeRemaining * 5;
+            this.addScore(timeBonus);
+            this.showNotification(`⏰ Bônus de tempo: +${timeBonus} pontos`, 'success', 3000);
+        }
+        
+        // Tocar som de vitória
+        this.playSuccessSound();
+        
+        // Mostrar mensagem de conclusão
+        this.showMessage(`🎉 Nível ${this.gameState.currentLevel} completado! Parabéns!`);
+        
+        // Verificar se há próximo nível ou se o jogo foi completado
+        if (this.gameState.currentLevel < this.config.maxLevel && this.gameData[this.gameState.currentLevel + 1]) {
+            // O botão já foi habilitado em checkLevelCompletion
+        } else {
+            // Jogo completado
+            this.completeGame();
+        }
+        
+        // Atualizar botões (desabilitar dica, etc., se necessário)
+        this.updateButtons();
+    }
+    
+    // Próximo nível
+    nextLevel() {
+        console.log('🎯 Avançando para próximo nível...');
+        
+        // Incrementar nível
+        this.gameState.currentLevel++;
+        
+        // Verificar se nível existe
+        if (!this.gameData[this.gameState.currentLevel]) {
+            console.log('🏆 Todos os níveis completados!');
+            this.completeGame();
+            return;
+        }
+        
+        // Resetar estado do nível
+        this.gameState.hintsUsed = 0;
+        this.gameState.timeRemaining = this.config.timePerLevel; // Reiniciar tempo para o novo nível
+        this.usedSyllables.clear();
+        this.gameState.wordsCompleted = 0; // Resetar palavras completadas para o novo nível
+        
+        // Configurar novo nível
+        this.setupLevel(this.gameState.currentLevel);
+        
+        // Atualizar interface
+        this.updateUI();
+        this.updateButtons(); // Atualizar botões após a mudança de nível (esconder próximo nível)
+        
+        // Mostrar mensagem
+        this.showMessage(`🎯 Nível ${this.gameState.currentLevel} iniciado! Boa sorte!`);
+        
+        // Esconder botão de próximo nível
+        if (this.elements.nextLevelBtn) {
+            this.elements.nextLevelBtn.style.display = 'none';
+        }
+        
+        console.log(`✅ Nível ${this.gameState.currentLevel} configurado!`);
+    }
+
+    
+    // Completar jogo
+    completeGame() {
+        console.log('🏆 Jogo completado!');
+        
+        this.gameState.isPlaying = false;
+        this.stopTimer(); // Parar o timer ao completar o jogo
+        
+        // Mostrar modal de vitória
+        this.showGameOverModal(true);
+    }
+    
+    // ===== SISTEMA DE CRONÔMETRO =====
+    startTimer() {
+        this.stopTimer(); // Limpar timer anterior
+        
+        this.gameState.timerInterval = setInterval(() => {
+            this.gameState.timeRemaining--;
+            this.updateTimerDisplay();
+            
+            // Avisos de tempo
+            if (this.gameState.timeRemaining === 30) {
+                this.showNotification('⏰ 30 segundos restantes!', 'warning', 3000);
+            } else if (this.gameState.timeRemaining === 10) {
+                this.showNotification('⏰ 10 segundos restantes!', 'error', 3000);
+                this.elements.gameTimer.classList.add('animate-pulse');
+            }
+            
+            // Tempo esgotado
+            if (this.gameState.timeRemaining <= 0) {
+                this.timeUp();
+            }
+        }, 1000);
+    }
+    
+    // Parar cronômetro
+    stopTimer() {
+        if (this.gameState.timerInterval) {
+            clearInterval(this.gameState.timerInterval);
+            this.gameState.timerInterval = null;
+        }
+        
+        this.elements.gameTimer?.classList.remove('animate-pulse');
+    }
+    
+    // Atualizar display do cronômetro
+    updateTimerDisplay() {
+        if (this.elements.gameTimer) {
+            this.elements.gameTimer.textContent = `${this.gameState.timeRemaining}s`;
+        }
+    }
+    
+    // Tempo esgotado
+    timeUp() {
+        console.log('⏰ Tempo esgotado!');
+        
+        this.stopTimer();
+        this.gameState.isPlaying = false;
+        
+        // Tocar som de derrota
+        this.playErrorSound();
+        
+        // Mostrar modal de game over
+        this.showGameOverModal(false);
+    }
+    
+    // ===== SISTEMA DE DICAS =====
+    showHint() {
+        if (this.gameState.hintsUsed >= this.config.hintsPerLevel) {
+            this.showNotification('❌ Você já usou todas as dicas deste nível!', 'warning', 3000);
+            return;
+        }
+        
+        // Encontrar primeira palavra incompleta
+        const incompleteWord = document.querySelector('.word-item:not(.completed)');
+        if (!incompleteWord) {
+            this.showNotification('✅ Todas as palavras já foram completadas!', 'info', 3000);
+            return;
+        }
+        
+        const wordIndex = parseInt(incompleteWord.dataset.wordIndex);
+        const wordData = this.currentWords[wordIndex];
+        
+        // Encontrar primeiro slot vazio
+        const emptySlot = incompleteWord.querySelector('.syllable-slot:not(.filled)');
+        if (!emptySlot) return;
+        
+        const slotIndex = parseInt(emptySlot.dataset.slotIndex);
+        const expectedSyllable = wordData.syllables[slotIndex];
+        
+        // Destacar sílaba correta
+        const correctSyllableElement = Array.from(document.querySelectorAll('.syllable-item')).find(
+            el => el.textContent === expectedSyllable && !el.classList.contains('used')
+        );
+        
+        if (correctSyllableElement) {
+            // Efeito visual na sílaba
+            correctSyllableElement.classList.add('animate-pulse');
+            correctSyllableElement.style.border = '3px solid var(--neon-orange)';
+            correctSyllableElement.style.boxShadow = '0 0 20px var(--neon-orange)';
+            
+            // Efeito visual no slot
+            emptySlot.style.border = '3px solid var(--neon-orange)';
+            emptySlot.style.boxShadow = '0 0 20px var(--neon-orange)';
+            
+            // Remover efeitos após 3 segundos
+            setTimeout(() => {
+                correctSyllableElement.classList.remove('animate-pulse');
+                correctSyllableElement.style.border = '';
+                correctSyllableElement.style.boxShadow = '';
+                emptySlot.style.border = '';
+                emptySlot.style.boxShadow = '';
+            }, 3000);
+            
+            this.gameState.hintsUsed++;
+            this.showNotification(`💡 Dica: A sílaba "${expectedSyllable}" vai no slot destacado!`, 'info', 4000);
+            
+            // Atualizar botão de dica
+            this.updateHintButton();
+        } else {
+            this.showNotification('Nenhuma sílaba disponível para esta dica no momento.', 'info', 3000);
+        }
+    }
+    
+    // Atualizar botão de dica
+    updateHintButton() {
+        if (this.elements.hintBtn) {
+            const remaining = this.config.hintsPerLevel - this.gameState.hintsUsed;
+            this.elements.hintBtn.innerHTML = `<i class="fas fa-lightbulb"></i> Dica (${remaining})`;
+            
+            if (remaining <= 0) {
+                this.elements.hintBtn.disabled = true;
+                this.elements.hintBtn.style.opacity = '0.5';
+            } else {
+                this.elements.hintBtn.disabled = false;
+                this.elements.hintBtn.style.opacity = '1';
+            }
+        }
+    }
+    
+    // ===== CONTROLES DO JOGO =====
+    resetGame() {
+        console.log('🔄 Resetando jogo...');
+        
+        // Parar cronômetro
+        this.stopTimer();
+        
+        // Resetar estado para o início do jogo (Nível 1)
+        this.gameState = {
+            isPlaying: false,
+            isPaused: false,
+            currentLevel: 1, // Começa do nível 1
+            score: 0,
+            wordsCompleted: 0,
+            hintsUsed: 0,
+            timeRemaining: 0,
+            timerInterval: null
+        };
+        
+        // Limpar interface
+        this.elements.wordsContainer.innerHTML = '';
+        this.elements.syllablesContainer.innerHTML = '';
+        this.usedSyllables.clear();
+        
+        // Atualizar interface
+        this.updateUI();
+        this.updateButtons(); // Mostrar botão 'Iniciar Jogo'
+        
+        // Esconder cronômetro
+        this.elements.timerContainer.style.display = 'none';
+        
+        // Mostrar mensagem
+        this.showMessage('🔄 Jogo resetado! Clique em "Iniciar Jogo" para começar novamente.');
+        
+        this.showNotification('🔄 Jogo resetado com sucesso!', 'info', 3000);
+    }
+    
+    // Reembaralhar sílabas
+    reshuffleSyllables() {
+        const syllableElements = Array.from(this.elements.syllablesContainer.children);
+        const shuffledElements = this.shuffleArray(syllableElements);
+        
+        // Limpar container
+        this.elements.syllablesContainer.innerHTML = '';
+        
+        // Adicionar elementos embaralhados
+        shuffledElements.forEach(element => {
+            this.elements.syllablesContainer.appendChild(element);
+        });
+        
+        this.showNotification('🔀 Sílabas embaralhadas!', 'info', 2000);
+    }
+    
+    // ===== INTERFACE E FEEDBACK =====
+    updateUI() {
+        // Atualizar informações do jogo
+        if (this.elements.currentLevel) {
+            this.elements.currentLevel.textContent = this.gameState.currentLevel;
+        }
+        
+        if (this.elements.currentScore) {
+            this.elements.currentScore.textContent = this.gameState.score;
+        }
+        
+        if (this.elements.wordsCompleted) {
+            this.elements.wordsCompleted.textContent = this.gameState.wordsCompleted;
+        }
+        
+        // Atualizar cronômetro
+        this.updateTimerDisplay();
+        
+        // Atualizar botão de dica
+        this.updateHintButton();
+    }
+    
+    // Atualizar botões
+    updateButtons() {
+        if (!this.gameState.isPlaying) {
+            this.elements.startGameBtn.style.display = 'inline-flex';
+            this.elements.resetGameBtn.style.display = 'none';
+            this.elements.nextLevelBtn.style.display = 'none'; // Sempre escondido quando não estiver jogando
+            this.elements.hintBtn.style.display = 'none';
+        } else {
+            this.elements.startGameBtn.style.display = 'none';
+            this.elements.resetGameBtn.style.display = 'inline-flex';
+            this.elements.hintBtn.style.display = 'inline-flex';
+            // O botão nextLevelBtn será exibido e habilitado na função checkLevelCompletion
+            // se o nível for completado. Caso contrário, permanece escondido.
+            if (document.querySelectorAll('.word-item:not(.completed)').length > 0) {
+                 this.elements.nextLevelBtn.style.display = 'none';
+            }
+        }
+    }
+    
+    // Atualizar progresso
+    updateProgress() {
+        const completedWords = document.querySelectorAll('.word-item.completed').length;
+        const totalWords = this.currentWords.length;
+        const percentage = totalWords > 0 ? (completedWords / totalWords) * 100 : 0;
+        
+        if (this.elements.levelProgress) {
+            this.elements.levelProgress.style.width = `${percentage}%`;
+        }
+        
+        if (this.elements.progressText) {
+            this.elements.progressText.textContent = `${Math.round(percentage)}%`;
+        }
+    }
+    
+    // Mostrar mensagem
+    showMessage(message) {
+        if (this.elements.gameMessage) {
+            this.elements.gameMessage.innerHTML = `<p>${message}</p>`;
+        }
+    }
+    
+    // Adicionar pontuação
+    addScore(points) {
+        this.gameState.score += points;
         this.updateUI();
         
-        this.playSound('hint');
-    }
-    
-    findIncompleteWord() {
-        const wordCards = document.querySelectorAll('.word-card');
-        for (let i = 0; i < wordCards.length; i++) {
-            if (!wordCards[i].classList.contains('completed')) {
-                return i;
-            }
-        }
-        return -1;
-    }
-    
-    // ===== UTILITÁRIOS =====
-    
-    showScreen(screenName) {
-        // Ocultar todas as telas
-        this.elements.instructions.style.display = 'none';
-        this.elements.gameArea.style.display = 'none';
-        this.elements.resultScreen.style.display = 'none';
-        
-        // Mostrar tela solicitada
-        if (this.elements[screenName]) {
-            this.elements[screenName].style.display = 'block';
-        }
-    }
-    
-    updateUI() {
-        if (this.elements.scoreValue) this.elements.scoreValue.textContent = this.score;
-        if (this.elements.levelValue) this.elements.levelValue.textContent = this.currentLevel;
-        if (this.elements.timerValue) this.elements.timerValue.textContent = this.formatTime(this.timer);
-    }
-    
-    updateProgress() {
-        const progress = this.totalWords > 0 ? (this.completedWords / this.totalWords) * 100 : 0;
-        if (this.elements.progressFill) {
-            this.elements.progressFill.style.width = `${progress}%`;
-        }
-    }
-    
-    startTimer() {
-        this.stopTimer();
-        this.timerInterval = setInterval(() => {
-            this.timer++;
-            this.updateUI();
-        }, 1000);
-    }
-    
-    stopTimer() {
-        if (this.timerInterval) {
-            clearInterval(this.timerInterval);
-            this.timerInterval = null;
-        }
-    }
-    
-    formatTime(seconds) {
-        const mins = Math.floor(seconds / 60);
-        const secs = seconds % 60;
-        return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-    }
-    
-    shuffleArray(array) {
-        for (let i = array.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [array[i], array[j]] = [array[j], array[i]];
-        }
-    }
-    
-    getRandomLetters(count) {
-        const allLetters = [...GAME_DATA.vowels, ...GAME_DATA.consonants];
-        const randomLetters = [];
-        
-        for (let i = 0; i < count; i++) {
-            const randomIndex = Math.floor(Math.random() * allLetters.length);
-            randomLetters.push(allLetters[randomIndex]);
-        }
-        
-        return randomLetters;
-    }
-    
-    // ===== FEEDBACK E EFEITOS VISUAIS =====
-    
-    showFeedback(message, type = 'info') {
-        const feedback = document.createElement('div');
-        feedback.className = `feedback-message ${type}`;
-        feedback.textContent = message;
-        
-        this.elements.feedbackArea.appendChild(feedback);
-        
-        setTimeout(() => {
-            if (feedback.parentNode) {
-                feedback.parentNode.removeChild(feedback);
-            }
-        }, 3000);
-    }
-    
-    createParticleEffect(element, type) {
-        const colors = {
-            success: ['#2ecc71', '#27ae60', '#00ff88'],
-            error: ['#e74c3c', '#c0392b', '#ff4757'],
-            info: ['#3498db', '#2980b9', '#00a8ff']
-        };
-        
-        const rect = element.getBoundingClientRect();
-        const centerX = rect.left + rect.width / 2;
-        const centerY = rect.top + rect.height / 2;
-        
-        for (let i = 0; i < 10; i++) {
-            const particle = document.createElement('div');
-            particle.style.cssText = `
-                position: fixed;
-                width: 6px;
-                height: 6px;
-                background: ${colors[type][Math.floor(Math.random() * colors[type].length)]};
-                border-radius: 50%;
-                pointer-events: none;
-                z-index: 1000;
-                left: ${centerX}px;
-                top: ${centerY}px;
-            `;
-            
-            document.body.appendChild(particle);
-            
-            const angle = (Math.PI * 2 * i) / 10;
-            const velocity = 50 + Math.random() * 50;
-            const vx = Math.cos(angle) * velocity;
-            const vy = Math.sin(angle) * velocity;
-            
-            let x = 0, y = 0, opacity = 1;
-            
-            const animate = () => {
-                x += vx * 0.02;
-                y += vy * 0.02 + 0.5; // Gravidade
-                opacity -= 0.02;
-                
-                particle.style.transform = `translate(${x}px, ${y}px)`;
-                particle.style.opacity = opacity;
-                
-                if (opacity > 0) {
-                    requestAnimationFrame(animate);
-                } else {
-                    document.body.removeChild(particle);
-                }
-            };
-            
-            animate();
-        }
-    }
-    
-    createCelebrationEffect(element) {
-        const rect = element.getBoundingClientRect();
-        
-        // Criar efeito de brilho
-        element.style.animation = 'glow 1s ease-in-out';
-        setTimeout(() => {
-            element.style.animation = '';
-        }, 1000);
-        
-        // Criar confetes
-        this.createParticleEffect(element, 'success');
-    }
-    
-    createFireworksEffect() {
-        const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#feca57'];
-        
-        for (let i = 0; i < 5; i++) {
+        // Efeito visual de pontuação
+        if (this.elements.currentScore) {
+            this.elements.currentScore.classList.add('animate-bounce');
             setTimeout(() => {
-                const x = Math.random() * window.innerWidth;
-                const y = Math.random() * window.innerHeight * 0.5;
-                
-                for (let j = 0; j < 20; j++) {
-                    const particle = document.createElement('div');
-                    particle.style.cssText = `
-                        position: fixed;
-                        width: 8px;
-                        height: 8px;
-                        background: ${colors[Math.floor(Math.random() * colors.length)]};
-                        border-radius: 50%;
-                        pointer-events: none;
-                        z-index: 1000;
-                        left: ${x}px;
-                        top: ${y}px;
-                    `;
-                    
-                    document.body.appendChild(particle);
-                    
-                    const angle = (Math.PI * 2 * j) / 20;
-                    const velocity = 100 + Math.random() * 100;
-                    const vx = Math.cos(angle) * velocity;
-                    const vy = Math.sin(angle) * velocity;
-                    
-                    let px = 0, py = 0, opacity = 1;
-                    
-                    const animate = () => {
-                        px += vx * 0.01;
-                        py += vy * 0.01 + 0.3;
-                        opacity -= 0.015;
-                        
-                        particle.style.transform = `translate(${px}px, ${py}px)`;
-                        particle.style.opacity = opacity;
-                        
-                        if (opacity > 0) {
-                            requestAnimationFrame(animate);
-                        } else {
-                            document.body.removeChild(particle);
-                        }
-                    };
-                    
-                    animate();
-                }
-            }, i * 200);
+                this.elements.currentScore.classList.remove('animate-bounce');
+            }, 500);
         }
     }
     
-    // ===== SISTEMA DE SOM =====
-    
-    playSound(type) {
-        if (!this.soundEnabled) return;
+    // ===== MODAL DE FIM DE JOGO =====
+    showGameOverModal(isVictory) {
+        const modal = this.elements.gameOverModal;
+        if (!modal) return;
         
-        // Criar contexto de áudio se não existir
-        if (!this.audioContext) {
-            this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        // Configurar conteúdo do modal
+        if (isVictory) {
+            this.elements.modalTitle.innerHTML = '<i class="fas fa-trophy"></i> Parabéns!';
+            this.elements.modalMessage.textContent = 'Você completou todos os níveis com sucesso!';
+        } else {
+            this.elements.modalTitle.innerHTML = '<i class="fas fa-clock"></i> Tempo Esgotado!';
+            this.elements.modalMessage.textContent = 'O tempo acabou, mas você pode tentar novamente!';
         }
         
-        const frequencies = {
-            correct: [523.25, 659.25, 783.99], // Dó, Mi, Sol
-            incorrect: [220, 196], // Lá, Sol
-            'word-complete': [523.25, 659.25, 783.99, 1046.50], // Dó, Mi, Sol, Dó
-            'level-complete': [523.25, 587.33, 659.25, 698.46, 783.99, 880, 987.77, 1046.50],
-            hint: [440, 554.37], // Lá, Dó#
-            info: [440] // Lá
-        };
+        // Atualizar estatísticas
+        this.elements.finalScore.textContent = this.gameState.score;
+        this.elements.finalLevel.textContent = this.gameState.currentLevel;
+        this.elements.finalWords.textContent = this.gameState.wordsCompleted;
         
-        const freq = frequencies[type] || [440];
-        this.playTone(freq);
+        // Mostrar tempo restante apenas se o timer foi ativado em algum nível
+        if (this.gameState.currentLevel >= this.config.timerStartLevel) {
+            this.elements.finalTime.textContent = `${Math.max(0, this.gameState.timeRemaining)}s`; // Garante que não mostre tempo negativo
+            this.elements.finalTimeContainer.style.display = 'flex';
+        } else {
+            this.elements.finalTimeContainer.style.display = 'none';
+        }
+        
+        // Mostrar modal
+        modal.classList.add('show');
+        modal.style.display = 'flex';
+        
+        // Tocar som apropriado
+        if (isVictory) {
+            this.playSuccessSound();
+        } else {
+            this.playErrorSound();
+        }
     }
     
-    playTone(frequencies) {
-        if (!this.audioContext) return;
-        
-        frequencies.forEach((freq, index) => {
+    // Fechar modal
+    closeModal() {
+        const modal = this.elements.gameOverModal;
+        if (modal) {
+            modal.classList.remove('show');
             setTimeout(() => {
-                const oscillator = this.audioContext.createOscillator();
-                const gainNode = this.audioContext.createGain();
-                
-                oscillator.connect(gainNode);
-                gainNode.connect(this.audioContext.destination);
-                
-                oscillator.frequency.setValueAtTime(freq, this.audioContext.currentTime);
-                oscillator.type = 'sine';
-                
-                gainNode.gain.setValueAtTime(0.1, this.audioContext.currentTime);
-                gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.3);
-                
-                oscillator.start(this.audioContext.currentTime);
-                oscillator.stop(this.audioContext.currentTime + 0.3);
-            }, index * 100);
-        });
-    }
-    
-    // ===== SISTEMA DE MODAIS =====
-    
-    openModal(modalId) {
-        const modal = document.getElementById(modalId);
-        if (modal) {
-            modal.classList.add('active');
+                modal.style.display = 'none';
+            }, 300);
         }
     }
     
-    closeModal(modalId) {
-        const modal = document.getElementById(modalId);
-        if (modal) {
-            modal.classList.remove('active');
+    // Jogar novamente
+    playAgain() {
+        this.closeModal();
+        this.resetGame(); // Reset para o estado inicial
+        setTimeout(() => {
+            this.startGame(); // Inicia um novo jogo
+        }, 500);
+    }
+    
+    // ===== CONTROLES DE TECLADO =====
+    handleKeyboard(e) {
+        if (!this.gameState.isPlaying) return;
+        
+        switch (e.key) {
+            case 'h':
+            case 'H':
+                if (e.ctrlKey) {
+                    e.preventDefault();
+                    this.showHint();
+                }
+                break;
+            case 'r':
+            case 'R':
+                if (e.ctrlKey) {
+                    e.preventDefault();
+                    this.resetGame();
+                }
+                break;
+            case 'Escape':
+                this.closeModal();
+                break;
         }
     }
     
-    closeAllModals() {
-        const modals = document.querySelectorAll('.modal');
-        modals.forEach(modal => {
-            modal.classList.remove('active');
-        });
+    // ===== SISTEMA DE ÁUDIO =====
+    playSuccessSound() {
+        try {
+            const audio = new Audio('audio/winners..mp3');
+            audio.volume = 0.3;
+            audio.play().catch(e => console.log('Erro ao tocar som de sucesso:', e));
+        } catch (error) {
+            console.log('Som de sucesso não disponível');
+        }
     }
     
-    openSettings() {
-        this.openModal('settingsModal');
+    playErrorSound() {
+        try {
+            const audio = new Audio('audio/defeat.mp3');
+            audio.volume = 0.3;
+            audio.play().catch(e => console.log('Erro ao tocar som de erro:', e));
+        } catch (error) {
+            console.log('Som de erro não disponível');
+        }
+    }
+    
+    // ===== SISTEMA DE NOTIFICAÇÕES =====
+    showNotification(message, type = 'info', duration = 3000) {
+        // Criar elemento de notificação
+        const notification = document.createElement('div');
+        notification.className = `notification notification-${type}`;
+        notification.innerHTML = `
+            <div class="notification-content">
+                <span class="notification-message">${message}</span>
+                <button class="notification-close">&times;</button>
+            </div>
+        `;
+        
+        // Adicionar ao body
+        document.body.appendChild(notification);
+        
+        // Mostrar notificação
+        setTimeout(() => {
+            notification.classList.add('show');
+        }, 100);
+        
+        // Configurar botão de fechar
+        const closeBtn = notification.querySelector('.notification-close');
+        closeBtn.addEventListener('click', () => {
+            this.removeNotification(notification);
+        });
+        
+        // Auto-remover após duração especificada
+        setTimeout(() => {
+            this.removeNotification(notification);
+        }, duration);
+    }
+    
+    // Remover notificação
+    removeNotification(notification) {
+        if (notification && notification.parentNode) {
+            notification.classList.remove('show');
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.parentNode.removeChild(notification);
+                }
+            }, 300);
+        }
     }
 }
 
 // ===== INICIALIZAÇÃO =====
-document.addEventListener('DOMContentLoaded', () => {
-    window.educationalGame = new EducationalGame();
-    console.log('🎮 Jogo educativo pronto para usar!');
-});
+let educationalGame;
+
+// Função de inicialização principal
+function initEducationalGame() {
+    try {
+        // Aguardar DOM estar pronto
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => {
+                educationalGame = new EducationalGame();
+                window.educationalGame = educationalGame;
+            });
+        } else {
+            educationalGame = new EducationalGame();
+            window.educationalGame = educationalGame;
+        }
+        
+        console.log('🎮 Sistema do jogo educativo inicializado com sucesso!');
+        
+    } catch (error) {
+        console.error('❌ Erro ao inicializar jogo educativo:', error);
+    }
+}
+
+// Inicializar jogo
+initEducationalGame();
 
 // ===== TRATAMENTO DE ERROS =====
 window.addEventListener('error', (event) => {
-    console.error('Erro no jogo:', event.error);
+    console.error('🚨 Erro no jogo educativo:', event.error);
 });
 
-// ===== EXPORTAR PARA USO GLOBAL =====
-window.EducationalGame = EducationalGame;
+console.log('🎮 Jogo educativo carregado com sucesso!');
